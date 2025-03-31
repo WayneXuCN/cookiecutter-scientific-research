@@ -7,7 +7,7 @@ name = {{ cookiecutter.module_name|tojson }}
 version = "0.0.1"
 description = {{ cookiecutter.description|tojson }}
 authors = [
-  { name = {{ cookiecutter.author_name|tojson }} },
+  { name = {{ cookiecutter.author_name|tojson }}, email = {{ cookiecutter.author_email|tojson }} },
 ]
 {% if cookiecutter.open_source_license != 'No license file' %}license = { file = "LICENSE" }{% endif %}
 readme = "README.md"

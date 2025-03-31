@@ -5,6 +5,7 @@ black
 build
 chardet
 flake8
+flit_core
 isort
 mkdocs
 mkdocs-material

@@ -2,16 +2,16 @@
 
 _A logical, flexible, and reasonably standardized project structure for doing and sharing data science work._
 
-![PyPI - Version](https://img.shields.io/pypi/v/cookiecutter-data-science)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cookiecutter-data-science)
-<a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">
-    <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
+![PyPI - Version](https://img.shields.io/pypi/v/cookiecutter-scientific-research)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cookiecutter-scientific-research)
+<a target="_blank" href="https://cookiecutter-scientific-research.drivendata.org/">
+    <img src="https://img.shields.io/badge/ccsr-Project%20template-328F97?logo=cookiecutter" />
 </a>
-[![tests](https://github.com/drivendataorg/cookiecutter-data-science/actions/workflows/tests.yml/badge.svg)](https://github.com/drivendataorg/cookiecutter-data-science/actions/workflows/tests.yml)
+[![tests](https://github.com/waynexucn/cookiecutter-scientific-research/actions/workflows/tests.yml/badge.svg)](https://github.com/waynexucn/cookiecutter-scientific-research/actions/workflows/tests.yml)
 
-!!! info "CCDS V2 Announcement"
+!!! info "ccsr V2 Announcement"
 
-    Version 2 of Cookiecutter Data Science has launched recently. To learn more about what's different and what's in progress, see the [announcement blog post for more information](https://drivendata.co/blog/ccds-v2).
+    Version 2 of Cookiecutter Data Science has launched recently. To learn more about what's different and what's in progress, see the [announcement blog post for more information](https://drivendata.co/blog/ccsr-v2).
 
 
 ## Quickstart
@@ -21,28 +21,28 @@ Cookiecutter Data Science v2 requires Python 3.9+. Since this is a cross-project
 === "With pipx (recommended)"
 
     ```bash
-    pipx install cookiecutter-data-science
+    pipx install cookiecutter-scientific-research
 
     # From the parent directory where you want your project
-    ccds
+    ccsr
     ```
 
 === "With pip"
 
     ```bash
-    pip install cookiecutter-data-science
+    pip install cookiecutter-scientific-research
     `
     # From the parent directory where you want your project
-    ccds
+    ccsr
     ```
 
 === "With conda (coming soon!)"
 
     ```bash
-    # conda install cookiecutter-data-science -c conda-forge
+    # conda install cookiecutter-scientific-research -c conda-forge
 
     # From the parent directory where you want your project
-    # ccds
+    # ccsr
     ```
 
 === "Use the v1 template"
@@ -51,12 +51,12 @@ Cookiecutter Data Science v2 requires Python 3.9+. Since this is a cross-project
     pip install cookiecutter
 
     # From the parent directory where you want your project
-    cookiecutter https://github.com/drivendataorg/cookiecutter-data-science -c v1
+    cookiecutter https://github.com/waynexucn/cookiecutter-scientific-research -c v1
     ```
 
-!!! info "Use the ccds command-line tool"
+!!! info "Use the ccsr command-line tool"
 
-    Cookiecutter Data Science v2 now requires installing the new `cookiecutter-data-science` Python package, which extends the functionality of the [`cookiecutter`](https://cookiecutter.readthedocs.io/en/stable/README.html) templating utility. Use the provided `ccds` command-line program instead of `cookiecutter`.
+    Cookiecutter Data Science v2 now requires installing the new `cookiecutter-scientific-research` Python package, which extends the functionality of the [`cookiecutter`](https://cookiecutter.readthedocs.io/en/stable/README.html) templating utility. Use the provided `ccsr` command-line program instead of `cookiecutter`.
 
 
 ## Starting a new project
@@ -64,10 +64,10 @@ Cookiecutter Data Science v2 requires Python 3.9+. Since this is a cross-project
 Starting a new project is as easy as running this command at the command line. No need to create a directory first, the cookiecutter will do it for you.
 
 ```bash
-ccds
+ccsr
 ```
 
-The `ccds` commandline tool defaults to the Cookiecutter Data Science template, but you can pass your own template as the first argument if you want.
+The `ccsr` commandline tool defaults to the Cookiecutter Data Science template, but you can pass your own template as the first argument if you want.
 
 
 ## Example

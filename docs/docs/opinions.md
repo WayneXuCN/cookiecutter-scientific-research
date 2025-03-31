@@ -31,7 +31,7 @@ If you have larger amounts of data, consider storing and syncing with a cloud se
 - Amazon S3: [`awscli`](https://aws.amazon.com/cli/), [`s3cmd`](https://s3tools.org/s3cmd), [`s5cmd`](https://github.com/peak/s5cmd), [`geesefs`](https://github.com/yandex-cloud/geesefs)
 - Azure Blob Storage: [`azcopy`](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10)
 - Google Cloud Platform: [`gcloud`](https://cloud.google.com/storage/docs/discover-object-storage-gcloud)
-- Supports multiple clouds: [`cloudpathlib`](https://github.com/drivendataorg/cloudpathlib), [`fsspec`](https://filesystem-spec.readthedocs.io/en/stable/)
+- Supports multiple clouds: [`cloudpathlib`](https://github.com/waynexucn/cloudpathlib), [`fsspec`](https://filesystem-spec.readthedocs.io/en/stable/)
 
 There is also the [Git Large File Storage (LFS)](https://git-lfs.github.com/) extension which lets you track large files in git but stores the files on a separate server. GitHub provides [some storage compatible with Git LFS](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-git-large-file-storage).
 
@@ -47,13 +47,13 @@ There are other tools for managing DAGs that are written in Python, instead of t
 
 [Jupyter Notebook](https://jupyter.org/), [Apache Zeppelin](https://zeppelin.apache.org/), and other literate programming tools are very effective for exploratory data analysis because they enable rapid iteration and visualization of results. However, these tools can be less effective for reproducing an analysis. Source code is superior for replicability because it is more portable, can be tested more easily, and is easier to code review. 
 
-When we use notebooks in our work, we often subdivide the `notebooks/` folder to keep things organized and legible. For example, `notebooks/exploratory/` contains initial explorations, whereas `notebooks/reports/` is more polished work that can be exported as html to the `reports/` directory. We also recommend that you follow a naming convention that shows the owner and the order the analysis was done in. We use the format `<step>-<ghuser>-<description>.ipynb` (e.g., `0.3-bull-visualize-distributions.ipynb`). Since notebooks are challenging objects for source control (e.g., diffs of the `json` are often not human-readable and merging is near impossible), we recommended not collaborating directly with others on Jupyter notebooks. We also recommend using a tool like [`nbautoexport`](https://github.com/drivendataorg/nbautoexport) to make reviewing changes to notebooks easier. 
+When we use notebooks in our work, we often subdivide the `notebooks/` folder to keep things organized and legible. For example, `notebooks/exploratory/` contains initial explorations, whereas `notebooks/reports/` is more polished work that can be exported as html to the `reports/` directory. We also recommend that you follow a naming convention that shows the owner and the order the analysis was done in. We use the format `<step>-<ghuser>-<description>.ipynb` (e.g., `0.3-bull-visualize-distributions.ipynb`). Since notebooks are challenging objects for source control (e.g., diffs of the `json` are often not human-readable and merging is near impossible), we recommended not collaborating directly with others on Jupyter notebooks. We also recommend using a tool like [`nbautoexport`](https://github.com/waynexucn/nbautoexport) to make reviewing changes to notebooks easier. 
 
 ### Refactor the good parts into source code 
 
 Don't write code to do the same task in multiple notebooks. If it's a data preprocessing task, put it in the pipeline at `{{ cookiecutter.module_name }}/data/make_dataset.py` and load data from `data/interim/`. If it's useful utility code, refactor it to `{{ cookiecutter.module_name }}`. Classic signs that you are ready to move from a notebook to source code include duplicating old notebooks to start new ones, copy/pasting functions between notebooks, and creating object-oriented classes within notebooks.
 
-We make it easy to refactor notebook code because the ccds template makes your project a Python package by default and installs it locally in the requirements file of your chosen environment manager. This enables you to import your project's source code and use it in notebooks with a cell like the following:
+We make it easy to refactor notebook code because the ccsr template makes your project a Python package by default and installs it locally in the requirements file of your chosen environment manager. This enables you to import your project's source code and use it in notebooks with a cell like the following:
 
 ```python
 # OPTIONAL: Load the "autoreload" extension so that code can change
@@ -149,11 +149,11 @@ A project's organizational needs may differ from the start and can change over t
 
 #### Example 1: Simplifying
 
-Some projects don't require multiple sub-directories to organize their module code. When a few python files can effectively accomplish all that is required, flattening folders into files can make things easier to track and maintain. You can see an example of this in our [cyfi package](https://github.com/drivendataorg/cyfi/tree/main/cyfi). If it's in the template but you don't need it, delete it!
+Some projects don't require multiple sub-directories to organize their module code. When a few python files can effectively accomplish all that is required, flattening folders into files can make things easier to track and maintain. You can see an example of this in our [cyfi package](https://github.com/waynexucn/cyfi/tree/main/cyfi). If it's in the template but you don't need it, delete it!
 
 #### Example 2: Expanding
 
-By contrast, we've added more folders to organize module code on more complex projects. A good example of this is our [zamba package](https://github.com/drivendataorg/zamba/tree/master/zamba) for which we've introduced new folders to handle task-specific portions of the codebase.
+By contrast, we've added more folders to organize module code on more complex projects. A good example of this is our [zamba package](https://github.com/waynexucn/zamba/tree/master/zamba) for which we've introduced new folders to handle task-specific portions of the codebase.
 
 #### Example 3: Re-organizing
 

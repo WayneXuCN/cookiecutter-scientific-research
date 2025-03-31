@@ -6,16 +6,16 @@ Here's a quick guide of the kinds of things we do once our project is ready to g
 
 ## Set up version control
 
-Often, we start by initializing a `git` repository to track the code we write in version control and collaborate with teammates. At the command line, you can do this with the following commands which do the following: turn the folder into a git repository, add all of the files and folders created by CCDS into source control (except for what is in the `.gitignore` file), and then make a commit to the repository.
+Often, we start by initializing a `git` repository to track the code we write in version control and collaborate with teammates. At the command line, you can do this with the following commands which do the following: turn the folder into a git repository, add all of the files and folders created by ccsr into source control (except for what is in the `.gitignore` file), and then make a commit to the repository.
 
 ```bash
 # From inside your newly created project directory
 git init
 git add .
-git commit -m "CCDS defaults"
+git commit -m "ccsr defaults"
 ```
 
-We usually commit the entire default CCDS structure so it is easy to track the changes we make to the structure in version history.
+We usually commit the entire default ccsr structure so it is easy to track the changes we make to the structure in version history.
 
 Now that the default layout is committed, you should push it to a shared repository. You can do this through the interface of whatever source control platform you use. This may be GitHub, GitLab, Bitbucket, or something else.
 
@@ -29,13 +29,13 @@ You'll be asked a series of questions to set up the repository on GitHub. Once y
 
 ## Make as a task runner
 
-[GNU Make](https://www.gnu.org/software/make/) is a tool that is typically pre-installed on Linux and macOS systems, and we use it as a "task runner" for CCDS projects. This means that when we have a series of shell commands we might want to run, such setting up a virtual environment or syncing the data to cloud storage, we set them up as recipes in the `Makefile`. To use a recipe, simply call
+[GNU Make](https://www.gnu.org/software/make/) is a tool that is typically pre-installed on Linux and macOS systems, and we use it as a "task runner" for ccsr projects. This means that when we have a series of shell commands we might want to run, such setting up a virtual environment or syncing the data to cloud storage, we set them up as recipes in the `Makefile`. To use a recipe, simply call
 
 ```bash
 make RECIPE_NAME
 ```
 
-where `RECIPE_NAME` is the name of a recipe like `requirements` or `sync_data_up`. Projects created by CCDS include a `Makefile` with several recipes we've predefined. You'll see them referenced in the sections below. To see a list of all available commands, just call
+where `RECIPE_NAME` is the name of a recipe like `requirements` or `sync_data_up`. Projects created by ccsr include a `Makefile` with several recipes we've predefined. You'll see them referenced in the sections below. To see a list of all available commands, just call
 
 ```bash
 make
@@ -117,7 +117,7 @@ First, we recommend turning on the `autoreload` extension. This will make Jupyte
 %autoreload 2
 ```
 
-Now all your code should be importable. At the start of the CCDS project, you picked a module name. It's the same name as the folder that is in the root project directory. For example, if the module name were `my_project` you could use code by importing it like:
+Now all your code should be importable. At the start of the ccsr project, you picked a module name. It's the same name as the folder that is in the root project directory. For example, if the module name were `my_project` you could use code by importing it like:
 
 ```python
 from my_project.data import make_dataset

@@ -3,7 +3,7 @@
 
 ## GLOBALS
 
-PROJECT_NAME = cookiecutter-data-science
+PROJECT_NAME = cookiecutter-scientific-research
 PYTHON_VERSION = 3.10
 PYTHON_INTERPRETER = python
 
@@ -23,16 +23,16 @@ create_environment:
 ## Install Python Dependencies
 requirements:
 	$(PYTHON_INTERPRETER) -m pip install -r dev-requirements.txt
-
+~
 ## Format the code using isort and black
 format:
-	isort --profile black ccds hooks tests docs/scripts
-	black ccds hooks tests docs/scripts
+	isort --profile black ccsr hooks tests docs/scripts
+	black ccsr hooks tests docs/scripts
 
 lint:
-	flake8 ccds hooks tests docs/scripts
-	isort --check --profile black ccds hooks tests docs/scripts
-	black --check ccds hooks tests docs/scripts
+	flake8 ccsr hooks tests docs/scripts
+	isort --check --profile black ccsr hooks tests docs/scripts
+	black --check ccsr hooks tests docs/scripts
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
@@ -84,8 +84,8 @@ _clean_manual_test:
 
 manual-test: _prep _clean_manual_test
 	mkdir -p manual_test
-	cd manual_test && python -m ccds ..
+	cd manual_test && python -m ccsr ..
 
 manual-test-debug: _prep _clean_manual_test
 	mkdir -p manual_test
-	cd manual_test && python -m pdb ../ccds/__main__.py ..
+	cd manual_test && python -m pdb ../ccsr/__main__.py ..

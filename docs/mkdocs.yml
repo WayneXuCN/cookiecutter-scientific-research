@@ -1,7 +1,7 @@
 site_name: Cookiecutter Data Science
 site_description: A project template and directory structure for Python data science projects.
-site_url: https://cookiecutter-data-science.drivendata.org
-repo_url: https://github.com/drivendataorg/cookiecutter-data-science
+site_url: https://cookiecutter-scientific-research.drivendata.org
+repo_url: https://github.com/waynexucn/cookiecutter-scientific-research
 edit_uri: edit/master/docs/docs
 copyright: Project maintained by the friendly folks at <a target=_blanks href="https://www.drivendata.org">DrivenData</a>.
 theme: 
@@ -9,7 +9,7 @@ theme:
   features:
     - navigation.instant
     - toc.integrate
-  logo: ccds.png
+  logo: ccsr.png
   name: material
   custom_dir: overrides
   palette:
@@ -20,7 +20,7 @@ theme:
     code: Space Mono
 nav:
   - Home: index.md
-  - Why ccds?: why.md
+  - Why ccsr?: why.md
   - Opinions: opinions.md
   - Using the template: using-the-template.md
   - All options: all-options.md

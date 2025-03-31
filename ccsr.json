@@ -12,15 +12,15 @@
         {"gcs": {"bucket": "bucket-name"}}
     ],
     "environment_manager": [
-        "virtualenv",
+        "uv",
         "conda",
         "pipenv",
-        "uv",
+        "virtualenv",
         "none"
     ],
     "dependency_file": [
-        "requirements.txt",
         "pyproject.toml",
+        "requirements.txt",
         "environment.yml",
         "Pipfile"
     ],
@@ -37,7 +37,13 @@
         "ruff",
         "flake8+black+isort"
     ],
-    "open_source_license": ["No license file", "MIT", "BSD-3-Clause"],
+    "open_source_license": [
+        "MIT license",
+        "BSD license",
+        "ISC license",
+        "Apache Software License 2.0",
+        "GNU General Public License v3",
+        "No license file"],
     "docs": ["mkdocs", "none"],
     "include_code_scaffold": ["Yes", "No"]
 }

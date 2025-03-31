@@ -82,7 +82,7 @@ jobs:
           path: ~/conda_pkgs_dir
           key:
             ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
-            hashFiles('ccds/hook_utils/dependencies.py') }}
+            hashFiles('ccsr/hook_utils/dependencies.py') }}
 
       - name: Setup for Windows
         if: ${{ matrix.os == 'windows-latest' }}

@@ -2,7 +2,7 @@
 set -ex
 
 PROJECT_NAME=$(basename $1)
-CCDS_ROOT=$(dirname $0)
+ccsr_ROOT=$(dirname $0)
 MODULE_NAME=$2
 
 # Configure exit / teardown behavior
@@ -19,7 +19,7 @@ function finish {
 trap finish EXIT
 
 # Source the steps in the test
-source $CCDS_ROOT/test_functions.sh
+source $ccsr_ROOT/test_functions.sh
 
 # Navigate to the generated project and run make commands
 cd $1

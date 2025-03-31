@@ -119,12 +119,12 @@ def generate_context_wrapper(*args, **kwargs):
     """Hardcoded in cookiecutter, so we override:
     https://github.com/cookiecutter/cookiecutter/blob/2bd62c67ec3e52b8e537d5346fd96ebd82803efe/cookiecutter/main.py#L85
     """
-    # replace full path to cookiecutter.json with full path to ccds.json
-    kwargs["context_file"] = str(Path(kwargs["context_file"]).with_name("ccds.json"))
+    # replace full path to cookiecutter.json with full path to ccsr.json
+    kwargs["context_file"] = str(Path(kwargs["context_file"]).with_name("ccsr.json"))
 
     parsed_context = generate_context(*args, **kwargs)
 
     # replace key
-    parsed_context["cookiecutter"] = parsed_context["ccds"]
-    del parsed_context["ccds"]
+    parsed_context["cookiecutter"] = parsed_context["ccsr"]
+    del parsed_context["ccsr"]
     return parsed_context

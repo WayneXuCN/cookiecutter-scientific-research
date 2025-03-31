@@ -5,7 +5,7 @@ from pathlib import Path
 import pexpect
 from ansi2html import Ansi2HTMLConverter
 
-CCDS_ROOT = Path(__file__).parents[2].resolve()
+ccsr_ROOT = Path(__file__).parents[2].resolve()
 
 
 def execute_command_and_get_output(command, input_script):
@@ -43,7 +43,7 @@ def execute_command_and_get_output(command, input_script):
         return interaction_history
 
 
-ccds_script = [
+ccsr_script = [
     ("project_name", "My Analysis"),
     ("repo_name", "my_analysis"),
     ("module_name", ""),
@@ -66,7 +66,7 @@ ccds_script = [
 def run_scripts():
     try:
         output = []
-        output += execute_command_and_get_output(f"ccds {CCDS_ROOT}", ccds_script)
+        output += execute_command_and_get_output(f"ccsr {ccsr_ROOT}", ccsr_script)
         return output
 
     finally:
@@ -80,7 +80,7 @@ def render_termynal():
     results = run_scripts()
 
     # watch for inputs and format them differently
-    script = iter(ccds_script)
+    script = iter(ccsr_script)
     _, user_input = next(script)
 
     conv = Ansi2HTMLConverter(inline=True)
@@ -132,13 +132,13 @@ def render_termynal():
     output = "\n".join(html_lines)
 
     # Ensure that all options are contained in the output
-    options = json.load((CCDS_ROOT / "ccds.json").open("r")).keys()
+    options = json.load((ccsr_ROOT / "ccsr.json").open("r")).keys()
     for option in options:
         assert option in output, f'Option "{option}" not found in termynal output.'
 
-    # replace local directory in ccds call with URL so it can be used for documentation
+    # replace local directory in ccsr call with URL so it can be used for documentation
     output = output.replace(
-        str(CCDS_ROOT), "https://github.com/drivendataorg/cookiecutter-data-science"
+        str(ccsr_ROOT), "https://github.com/waynexucn/cookiecutter-scientific-research"
     )
     return output
 

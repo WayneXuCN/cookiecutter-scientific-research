@@ -13,4 +13,4 @@ Use [mkdocs](https://www.mkdocs.org/) structure to update the documentation. Tes
 
     mkdocs serve
 
-The [hosted docs](https://cookiecutter-data-science.drivendata.org/) are deployed via [render](render.com) when the `master` branch is updated.
+The [hosted docs](https://cookiecutter-scientific-research.drivendata.org/) are deployed via [render](render.com) when the `master` branch is updated.

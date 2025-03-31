@@ -2,7 +2,7 @@ import json
 import re
 from pathlib import Path
 
-from ccds.hook_utils.dependencies import basic
+from ccsr.hook_utils.dependencies import basic
 
 PROJECT_ROOT = Path(__file__).parents[2]
 
@@ -40,7 +40,7 @@ def _new_section(item, item_type, default, description, more_info=""):
     ] + (_table_header() if item_type != "string" else [])
 
 
-def _ccds_help_to_lookups(help, prefix="", out=None):
+def _ccsr_help_to_lookups(help, prefix="", out=None):
     if out is None:
         out = {}
 
@@ -51,10 +51,10 @@ def _ccds_help_to_lookups(help, prefix="", out=None):
         out[item_key] = item["help"]
 
         if choices := item.get("choices", None):
-            out.update(_ccds_help_to_lookups(choices, prefix=item_key, out=out))
+            out.update(_ccsr_help_to_lookups(choices, prefix=item_key, out=out))
 
         if subfields := item.get("subfields", None):
-            out.update(_ccds_help_to_lookups(subfields, prefix=item_key, out=out))
+            out.update(_ccsr_help_to_lookups(subfields, prefix=item_key, out=out))
 
     return out
 
@@ -148,12 +148,12 @@ def build_help_table_rows(data, help_lookup, lookup_prefix=""):
 
 
 def render_options_table():
-    with (PROJECT_ROOT / "ccds.json").open() as f:
+    with (PROJECT_ROOT / "ccsr.json").open() as f:
         data = json.load(f)
 
-    with (PROJECT_ROOT / "ccds-help.json").open() as f:
+    with (PROJECT_ROOT / "ccsr-help.json").open() as f:
         help = json.load(f)
-        help_lookup = _ccds_help_to_lookups(help)
+        help_lookup = _ccsr_help_to_lookups(help)
 
     body_items = build_help_table_rows(data, help_lookup)
 

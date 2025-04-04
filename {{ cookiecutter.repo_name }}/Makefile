@@ -10,36 +10,20 @@ PYTHON_INTERPRETER = python
 # COMMANDS                                                                      #
 #################################################################################
 
-{% if cookiecutter.dependency_file != 'none' %}
-## Install Python dependencies
-.PHONY: requirements
-requirements:
-	{% if "requirements.txt" == cookiecutter.dependency_file -%}
-	{% if "uv" == cookiecutter.environment_manager -%}
-	uv pip install -r requirements.txt
-	{% else -%}
-	$(PYTHON_INTERPRETER) -m pip install -U pip
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
-	{% endif -%}
-	{% elif "pyproject.toml" == cookiecutter.dependency_file -%}
-	{% if "uv" == cookiecutter.environment_manager -%}
-	uv sync
-	{% else -%}
-	pip install -e .
-	{% endif -%}
-	{% elif "environment.yml" == cookiecutter.dependency_file -%}
-	conda env update --name $(PROJECT_NAME) --file environment.yml --prune
-	{% elif "Pipfile" == cookiecutter.dependency_file -%}
-	pipenv install
-{% endif %}
-{% endif %}
 
-
-## Delete all compiled Python files
+## Clean all files cache
 .PHONY: clean
 clean:
+	@echo "Delete compiled Python files..."
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
+	@echo "Cleaning Jupyter Notebooks cache..."
+	find . -name "*.ipynb" -exec nb-clean clean {} \;
+	@echo "Cleaning Marimo cache..."
+	find . -type d -name "__marimo__" -exec rm -rf {} +
+	@echo "Cleaning ruff cache..."
+	ruff clean
+
 
 {% if cookiecutter.linting_and_formatting == 'ruff' %}
 ## Lint using ruff (use `make format` to do formatting)

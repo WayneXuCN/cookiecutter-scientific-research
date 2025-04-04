@@ -7,6 +7,7 @@ from pathlib import Path
 from ccsr.hook_utils.custom_config import write_custom_config
 from ccsr.hook_utils.dependencies import (
     basic,
+    marimo,
     flake8_black_isort,
     packages,
     ruff,
@@ -30,6 +31,10 @@ packages_to_install += scaffold
 
 # {% if cookiecutter.pydata_packages == "basic" %}
 packages_to_install += basic
+# {% endif %}
+
+# {% if cookiecutter.notebook == "marimo" %}
+packages_to_install += marimo
 # {% endif %}
 
 # {% if cookiecutter.linting_and_formatting == "ruff" %}

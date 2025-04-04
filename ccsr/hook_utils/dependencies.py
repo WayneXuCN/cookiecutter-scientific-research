@@ -23,6 +23,12 @@ basic = [
     "scikit-learn",
 ]
 
+marimo = [
+    "marimo[lsp]",
+    "watchdog",
+    "python-socks",
+]
+
 scaffold = [
     "typer",
     "loguru",

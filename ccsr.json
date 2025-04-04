@@ -26,8 +26,12 @@
         "Pipfile"
     ],
     "pydata_packages": [
-        "none",
-        "basic"
+        "basic",
+        "none"
+    ],
+    "notebook": [
+        "jupyterlab",
+        "marimo"
     ],
     "testing_framework": [
         "none",

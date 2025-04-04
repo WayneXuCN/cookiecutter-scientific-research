@@ -38,9 +38,29 @@ src = ["{{ cookiecutter.module_name }}"]
 include = ["pyproject.toml", "{{ cookiecutter.module_name }}/**/*.py"]
 
 [tool.ruff.lint]
-extend-select = ["I"]  # Add import sorting
+extend-select = ["I"] # Add import sorting
+isort = {known-first-party = ["src"], force-sort-within-sections = true}
+{% endif %}
 
-[tool.ruff.lint.isort]
-known-first-party = ["{{ cookiecutter.module_name }}"]
-force-sort-within-sections = true
+{% if cookiecutter.notebook == 'marimo' %}
+[tool.marimo]
+runtime = { auto_instantiate = false, auto_reload = "lazy" }
+save = { autosave = "after_delay", autosave_delay = 5, format_on_save = true }
+formatting = { line_length = 120 }
+display = { default_width = "full" }
+package_management = { manager = "{{ cookiecutter.environment_manager }}" }
+experimental = { lsp = true }
+diagnostics = { enabled = true }
+
+[tool.marimo.language_servers.pylsp]
+enabled = true
+enable_mypy = true
+{% if cookiecutter.linting_and_formatting == 'ruff' %}
+enable_ruff = true 
+{% endif %}
+{% if cookiecutter.linting_and_formatting == 'flake8+black+isort' %}
+enable_flake8 = true 
+enable_pylint = true
+enable_pyflakes = true  
+{% endif %}
 {% endif %}

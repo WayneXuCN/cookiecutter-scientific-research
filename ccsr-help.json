@@ -277,24 +277,45 @@
         },
         "choices": [
             {
-                "choice": "No license file",
-                "help": {
-                    "description": "No license file will be included.",
-                    "more_information": ""
-                } 
-            },
-            {
-                "choice": "MIT",
+                "choice": "MIT license",
                 "help": {
                     "description": "MIT License",
                     "more_information": "[License](https://opensource.org/license/mit)"
                 } 
             },
             {
-                "choice": "BSD-3-Clause",
+                "choice": "BSD license",
                 "help": {
-                    "description": "3-Clause BSD License",
+                    "description": "BSD License",
                     "more_information": "[License](https://opensource.org/license/bsd-3-clause)"
+                } 
+            },
+            {
+                "choice": "ISC license",
+                "help": {
+                    "description": "ISC License",
+                    "more_information": "[License](https://opensource.org/license/isc-license-txt)"
+                } 
+            },
+            {
+                "choice": "Apache Software License 2.0",
+                "help": {
+                    "description": "Apache License, Version 2.0",
+                    "more_information": "[License](https://opensource.org/license/apache-2-0)"
+                } 
+            },
+            {
+                "choice": "GNU General Public License v3",
+                "help": {
+                    "description": "GNU GPL v3",
+                    "more_information": "[License](https://www.gnu.org/licenses/gpl-3.0.en.html)"
+                } 
+            },
+            {
+                "choice": "No license file",
+                "help": {
+                    "description": "No license file will be included.",
+                    "more_information": ""
                 } 
             }
         ]
@@ -341,6 +362,29 @@
                 "help": {
                     "description": "Empty Python module to start with.",
                     "more_information": ""
+                } 
+            }
+        ]
+    },
+    {
+        "field": "notebook",
+        "help": {
+            "description": "Notebook interface for interactive data exploration and analysis.",
+            "more_information": ""
+        },
+        "choices": [
+            {
+                "choice": "jupyterlab",
+                "help": {
+                    "description": "Web-based interactive development environment for notebooks.",
+                    "more_information": "[Docs](https://jupyterlab.readthedocs.io/en/stable/)"
+                } 
+            },
+            {
+                "choice": "marimo",
+                "help": {
+                    "description": "Reactive notebooks for Python - a modern alternative to Jupyter.",
+                    "more_information": "[Docs](https://marimo.io/)"
                 } 
             }
         ]

@@ -7,7 +7,7 @@ name = "ccsr"
 
 [project]
 name = "cookiecutter-scientific-research"
-version = "1.0.0"
+version = "1.0.1"
 description = "A logical, reasonably standardized but flexible project structure for doing and sharing scientific research."
 authors = [
   { name = "Wenjie Xu", email = "wenjie.xu.cn@outlook.com" },
@@ -28,16 +28,41 @@ classifiers = [
   "Topic :: Scientific/Engineering",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
+keywords = ["cookiecutter", "template", "science", "research", "reproducible-research", "project-structure"]
 requires-python = ">=3.9"
 dependencies = [
   "click",
   "cookiecutter",
-  "tomlkit",
-  "flit_core",
+  "tomlkit"
 ]
+
+[project.optional-dependencies]
+dev = [
+    "flit_core",
+    "ansi2html",
+    "black",
+    "build",
+    "flake8",
+    "isort",
+    "pytest",
+    "twine",
+]
+
+test = [
+    "pytest-cov",
+    "hypothesis",
+]
+
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+]
+
 
 [project.scripts]
 ccsr = "ccsr.__main__:main"
 
 [project.urls]
 "Source Code" = "https://github.com/waynexucn/cookiecutter-scientific-research/"
+"Documentation" = "https://github.com/waynexucn/cookiecutter-scientific-research/blob/master/README.md"
+"Issues" = "https://github.com/waynexucn/cookiecutter-scientific-research/issues"

@@ -36,17 +36,14 @@ Cookiecutter Scientific Research is a project template generator designed for sc
 
 ### Installation
 
-This project is distributed through GitHub Releases. As a cross-project tool, we recommend using uv or pipx for installation:
+This project is available on PyPI. As a cross-project tool, we recommend using uv or pipx for installation:
 
 ```bash
-# 1. Download the latest version of the wheel file from GitHub Release
-# Download URL: https://github.com/waynexucn/cookiecutter-scientific-research/releases
-
-# 2. Install using uv (recommended)
-uv tool install ./cookiecutter_scientific_research-x.y.z-py3-none-any.whl
+# Install using uv (recommended)
+uv tool install cookiecutter-scientific-research
 
 # Or install using pipx
-pipx install ./cookiecutter_scientific_research-x.y.z-py3-none-any.whl
+pipx install cookiecutter-scientific-research
 ```
 
 ### Creating a New Project
@@ -133,7 +130,12 @@ This project uses `flit_core` as the build backend, supporting modern Python pac
 ```bash
 # Install build dependencies
 uv lock
-uv sync
+# Install all optional dependencies
+uv sync --all-extras
+# Or install specific dependency groups
+uv sync -e dev    # Development dependencies
+uv sync -e test   # Testing dependencies
+uv sync -e docs   # Documentation dependencies
 
 # Build distribution packages
 uv build

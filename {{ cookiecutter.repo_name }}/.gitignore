@@ -1,5 +1,19 @@
 # Data
-/data/
+/data/*
+!/data/.gitkeep
+!/data/*/
+/data/*/*
+!/data/*/.gitkeep
+
+# model
+/models/*
+!/models/.gitkeep
+
+# reports
+/reports/logs/*
+/reports/figures/*
+!/reports/logs/.gitkeep
+!/reports/figures/.gitkeep
 
 # Mac OS-specific storage files
 .DS_Store

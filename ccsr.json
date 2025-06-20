@@ -50,5 +50,5 @@
         "Apache Software License 2.0",
         "GNU General Public License v3",
         "No license file"],
-    "docs": ["none", "mkdocs"],
+    "docs": ["none", "mkdocs"]
 }

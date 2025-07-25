@@ -7,7 +7,7 @@ name = "ccsr"
 
 [project]
 name = "cookiecutter-scientific-research"
-version = "1.0.3"
+version = "1.0.4"
 description = "A logical, reasonably standardized but flexible project structure for doing and sharing scientific research."
 authors = [
   { name = "Wenjie Xu", email = "wenjie.xu.cn@outlook.com" },

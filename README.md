@@ -85,24 +85,24 @@ The generated project follows the directory structure below, with each section h
 ├── {{ cookiecutter.module_name }}  <- Project source code
 │   ├── __init__.py    <- Package initialization file
 │   ├── config.py      <- Configuration parameter management
-│   ├── dataset.py     <- Data acquisition and loading
-│   ├── plots.py       <- Data visualization functions
-│   │
+│   ├── data           <- Data acquisition and loading
+│   │   ├── __init__.py
+│   │   └── dataset.py
 │   ├── analyze        <- Data analysis module
 │   │   └── analysis.py
-│   │
-│   ├── modeling       <- Model training and prediction
+│   ├── training       <- Model training and prediction
 │   │   ├── __init__.py
 │   │   ├── predict.py <- Model prediction
 │   │   └── train.py   <- Model training
-│   │
 │   ├── models         <- Model definitions
 │   │   ├── __init__.py
 │   │   └── model.py   <- Model architecture
-│   │
-│   ├── process        <- Data processing
-│   │   └── features.py <- Feature engineering
-│   │
+│   ├── features        <- Feature engineering
+│   │   ├── __init__.py
+│   │   └── features.py
+│   ├── visualization   <- Data visualization
+│   │   ├── __init__.py
+│   │   └── plot.py 
 │   └── utils          <- Utility functions
 │       ├── __init__.py
 │       └── tools.py   <- General utilities

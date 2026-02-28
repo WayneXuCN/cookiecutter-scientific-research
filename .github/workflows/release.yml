@@ -11,17 +11,17 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r dev-requirements.txt
+          pip install -e ".[dev]"
 
       - name: Check that versions match
         id: version
@@ -30,14 +30,14 @@ jobs:
           PACKAGE_VERSION=$(python -c "import ccsr; print(ccsr.__version__)")
           echo "Package version: [$PACKAGE_VERSION]"
           [ ${{ github.event.release.tag_name }} == "v$PACKAGE_VERSION" ] || { exit 1; }
-          echo "::set-output name=major_minor_version::v${PACKAGE_VERSION%.*}"
+          echo "major_minor_version=v${PACKAGE_VERSION%.*}" >> "$GITHUB_OUTPUT"
 
       - name: Build package
         run: |
           make dist
           
       - name: Publish to Test PyPI
-        uses: pypa/gh-action-pypi-publish@v1.3.0
+        uses: pypa/gh-action-pypi-publish@v1.12.2
         with:
           user: ${{ secrets.PYPI_TEST_USERNAME }}
           password: ${{ secrets.PYPI_TEST_PASSWORD }}
@@ -45,7 +45,7 @@ jobs:
           skip_existing: true
 
       - name: Publish to Production PyPI
-        uses: pypa/gh-action-pypi-publish@v1.3.0
+        uses: pypa/gh-action-pypi-publish@v1.12.2
         with:
           user: ${{ secrets.PYPI_PROD_USERNAME }}
           password: ${{ secrets.PYPI_PROD_PASSWORD }}

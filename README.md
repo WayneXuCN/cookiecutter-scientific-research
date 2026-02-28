@@ -89,23 +89,24 @@ The generated project follows the directory structure below, with each section h
 │   │   ├── __init__.py
 │   │   └── dataset.py
 │   ├── analyze        <- Data analysis module
+│   │   ├── __init__.py
 │   │   └── analysis.py
-│   ├── training       <- Model training and prediction
-│   │   ├── __init__.py
-│   │   ├── predict.py <- Model prediction
-│   │   └── train.py   <- Model training
-│   ├── models         <- Model definitions
-│   │   ├── __init__.py
-│   │   └── model.py   <- Model architecture
-│   ├── features        <- Feature engineering
+│   ├── features       <- Feature engineering
 │   │   ├── __init__.py
 │   │   └── features.py
-│   ├── visualization   <- Data visualization
+│   ├── models         <- Model definitions
 │   │   ├── __init__.py
-│   │   └── plot.py 
+│   │   └── model.py
+│   ├── training       <- Model training and prediction
+│   │   ├── __init__.py
+│   │   ├── train.py
+│   │   └── predict.py
+│   ├── visualization  <- Data visualization
+│   │   ├── __init__.py
+│   │   └── plots.py
 │   └── utils          <- Utility functions
 │       ├── __init__.py
-│       └── tools.py   <- General utilities
+│       └── tools.py
 │
 ├── notebooks          <- Jupyter/Marimo notebooks
 │                         (Naming convention: number-creator-description)

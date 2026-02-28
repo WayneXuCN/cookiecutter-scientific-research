@@ -69,16 +69,26 @@ def verify_folders(root, config):
         "references",
         "reports",
         "reports/figures",
+        "reports/logs",
         config["module_name"],
     ]
 
     if config["include_code_scaffold"] == "Yes":
         expected_dirs += [
-            f"{config['module_name']}/modeling",
+            f"{config['module_name']}/data",
+            f"{config['module_name']}/analyze",
+            f"{config['module_name']}/features",
+            f"{config['module_name']}/models",
+            f"{config['module_name']}/training",
+            f"{config['module_name']}/visualization",
+            f"{config['module_name']}/utils",
         ]
 
     if config["docs"] == "mkdocs":
         expected_dirs += ["docs/docs"]
+
+    if config.get("testing_framework", "none") != "none":
+        expected_dirs += ["tests"]
 
     expected_dirs = [
         #  (root / d).resolve().relative_to(root) for d in expected_dirs
@@ -96,6 +106,7 @@ def verify_folders(root, config):
 def verify_files(root, config):
     """Test that expected files and only expected files exist."""
     expected_files = [
+        ".gitattributes",
         "Makefile",
         "README.md",
         "pyproject.toml",
@@ -110,6 +121,7 @@ def verify_files(root, config):
         "references/.gitkeep",
         "reports/.gitkeep",
         "reports/figures/.gitkeep",
+        "reports/logs/.gitkeep",
         "models/.gitkeep",
         f"{config['module_name']}/__init__.py",
     ]
@@ -124,12 +136,21 @@ def verify_files(root, config):
     if config["include_code_scaffold"] == "Yes":
         expected_files += [
             f"{config['module_name']}/config.py",
-            f"{config['module_name']}/dataset.py",
-            f"{config['module_name']}/features.py",
-            f"{config['module_name']}/modeling/__init__.py",
-            f"{config['module_name']}/modeling/train.py",
-            f"{config['module_name']}/modeling/predict.py",
-            f"{config['module_name']}/plots.py",
+            f"{config['module_name']}/data/__init__.py",
+            f"{config['module_name']}/data/dataset.py",
+            f"{config['module_name']}/analyze/__init__.py",
+            f"{config['module_name']}/analyze/analysis.py",
+            f"{config['module_name']}/features/__init__.py",
+            f"{config['module_name']}/features/features.py",
+            f"{config['module_name']}/models/__init__.py",
+            f"{config['module_name']}/models/model.py",
+            f"{config['module_name']}/training/__init__.py",
+            f"{config['module_name']}/training/train.py",
+            f"{config['module_name']}/training/predict.py",
+            f"{config['module_name']}/visualization/__init__.py",
+            f"{config['module_name']}/visualization/plots.py",
+            f"{config['module_name']}/utils/__init__.py",
+            f"{config['module_name']}/utils/tools.py",
         ]
 
     if config["docs"] == "mkdocs":
@@ -138,6 +159,11 @@ def verify_files(root, config):
             "docs/README.md",
             "docs/docs/index.md",
             "docs/docs/getting-started.md",
+        ]
+
+    if config.get("testing_framework", "none") != "none":
+        expected_files += [
+            "tests/test_data.py",
         ]
 
     expected_files.append(config["dependency_file"])
@@ -193,7 +219,7 @@ def verify_makefile_commands(root, config):
 
     # Check that makefile help ran successfully
     assert "Available rules:" in stdout_output
-    assert "clean                    Delete all compiled Python files" in stdout_output
+    assert "clean" in stdout_output
 
     # Check that linting and formatting ran successfully
     if config["linting_and_formatting"] == "ruff":

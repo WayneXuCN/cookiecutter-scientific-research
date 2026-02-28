@@ -1,7 +1,6 @@
 import tomlkit
 
 packages = [
-    "pip",
     "python-dotenv",
 ]
 
@@ -15,9 +14,7 @@ ruff = ["ruff"]
 
 basic = [
     "ipython",
-    "jupyterlab",
     "matplotlib",
-    "notebook",
     "numpy",
     "pandas",
     "scikit-learn",
@@ -27,6 +24,11 @@ marimo = [
     "marimo[lsp]",
     "watchdog",
     "python-socks",
+]
+
+jupyterlab = [
+    "jupyterlab",
+    "notebook",
 ]
 
 scaffold = [

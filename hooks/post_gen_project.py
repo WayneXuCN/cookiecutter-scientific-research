@@ -7,6 +7,7 @@ from pathlib import Path
 from ccsr.hook_utils.custom_config import write_custom_config
 from ccsr.hook_utils.dependencies import (
     basic,
+    jupyterlab,
     marimo,
     flake8_black_isort,
     packages,
@@ -35,6 +36,10 @@ packages_to_install += basic
 
 # {% if cookiecutter.notebook == "marimo" %}
 packages_to_install += marimo
+# {% endif %}
+
+# {% if cookiecutter.notebook == "jupyterlab" %}
+packages_to_install += jupyterlab
 # {% endif %}
 
 # {% if cookiecutter.linting_and_formatting == "ruff" %}

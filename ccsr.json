@@ -5,7 +5,7 @@
     "author_name": "Wenjie Xu",
     "author_email": "wenjie.xu.cn@outlook.com",
     "description": "A short description of the project.",
-    "python_version_number": "3.12",
+    "python_version_number": "3.13",
     "dataset_storage": [
         {"none": "none"},
         {"azure": {"container": "container-name"}},
@@ -32,12 +32,13 @@
     "include_code_scaffold": ["Yes", "No"],
     "notebook": [
         "jupyterlab",
-        "marimo"
+        "marimo",
+        "none"
     ],
     "testing_framework": [
-        "none",
         "pytest",
-        "unittest"
+        "unittest",
+        "none"
     ],
     "linting_and_formatting": [
         "ruff",
@@ -50,5 +51,6 @@
         "Apache Software License 2.0",
         "GNU General Public License v3",
         "No license file"],
-    "docs": ["none", "mkdocs"]
+    "docs": ["none", "mkdocs"],
+    "custom_config": ""
 }

@@ -28,6 +28,13 @@
         }
     },
     {
+        "field": "author_email",
+        "help": {
+            "description": "Email address for the project author, used in package metadata.",
+            "more_information": ""
+        }
+    },
+    {
         "field": "description",
         "help": {
             "description": "A short description that appears in the README.md file by default.",
@@ -224,13 +231,6 @@
         },
         "choices": [
             {
-                "choice": "none",
-                "help": {
-                    "description": "No testing framework.",
-                    "more_information": ""
-                }
-            },
-            {
                 "choice": "pytest",
                 "help": {
                     "description": "Use the pytest framework for testing.",
@@ -242,6 +242,13 @@
                 "help": {
                     "description": "Use Python's built-in testing framework.",
                     "more_information": "[Docs](https://docs.python.org/3/library/unittest.html)"
+                }
+            },
+            {
+                "choice": "none",
+                "help": {
+                    "description": "No testing framework.",
+                    "more_information": ""
                 }
             }
         ]
@@ -385,6 +392,13 @@
                 "help": {
                     "description": "Reactive notebooks for Python - a modern alternative to Jupyter.",
                     "more_information": "[Docs](https://marimo.io/)"
+                } 
+            },
+            {
+                "choice": "none",
+                "help": {
+                    "description": "No notebook interface configured.",
+                    "more_information": ""
                 } 
             }
         ]

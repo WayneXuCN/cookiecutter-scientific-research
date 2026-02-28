@@ -11,74 +11,73 @@ app = typer.Typer()
 
 
 class BaseModel:
-    """基础模型类，用于继承和扩展。"""
+    """Base model class for inheritance and extension."""
     
     def __init__(self, params: Optional[Dict[str, Any]] = None):
         """
-        初始化模型。
+        Initialize model.
         
         Args:
-            params: 模型参数字典
+            params: Dictionary of model parameters
         """
         self.params = params or {}
         self.model = None
     
     def fit(self, X, y):
         """
-        训练模型。
+        Train the model.
         
         Args:
-            X: 特征数据
-            y: 目标变量
+            X: Feature data
+            y: Target variable
         """
-        raise NotImplementedError("子类必须实现此方法")
+        raise NotImplementedError("Subclasses must implement this method")
     
     def predict(self, X):
         """
-        使用模型进行预测。
+        Make predictions using the model.
         
         Args:
-            X: 特征数据
+            X: Feature data
         
         Returns:
-            预测结果
+            Prediction results
         """
         if self.model is None:
-            raise ValueError("模型尚未训练，请先调用fit方法")
-        raise NotImplementedError("子类必须实现此方法")
+            raise ValueError("Model not trained yet. Call fit() first.")
+        raise NotImplementedError("Subclasses must implement this method")
     
     def save(self, path):
         """
-        保存模型到文件。
+        Save the model to a file.
         
         Args:
-            path: 保存路径
+            path: File path to save the model
         """
         if self.model is None:
-            raise ValueError("没有模型可保存，请先训练模型")
+            raise ValueError("No model to save. Train the model first.")
         
-        # 确保父目录存在
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         
         with open(path, "wb") as f:
             pickle.dump(self.model, f)
-        logger.info(f"模型已保存到: {path}")
+        logger.info(f"Model saved to: {path}")
     
     @classmethod
     def load(cls, path):
         """
-        从文件加载模型。
+        Load a model from a file.
         
         Args:
-            path: 模型文件路径
+            path: Path to the model file
         
         Returns:
-            加载的模型实例
+            Loaded model instance
         """
         instance = cls()
         with open(path, "rb") as f:
             instance.model = pickle.load(f)
-        logger.info(f"模型已从 {path} 加载")
+        logger.info(f"Model loaded from: {path}")
         return instance
 
 
@@ -89,26 +88,25 @@ def create_model(
     # ----------------------------------------------
 ):
     """
-    创建一个新的模型实例。
-    此命令用于初始化模型并保存默认结构，通常在开始新的建模任务时使用。
+    Create a new model instance.
+    This command initializes a model and saves the default structure,
+    typically used when starting a new modeling task.
     """
     # ---- REPLACE THIS WITH YOUR OWN CODE ----
-    logger.info("创建新模型...")
+    logger.info("Creating new model...")
     
-    # 创建一个简单的模型结构或配置
     model_config = {
         "name": "your_model_name",
         "version": "0.1.0",
         "hyperparameters": {},
-        "created_at": None  # 可以在这里添加时间戳
+        "created_at": None,
     }
     
-    # 保存模型配置或初始化模型
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "wb") as f:
         pickle.dump(model_config, f)
     
-    logger.success(f"模型初始结构已保存到: {output_path}")
+    logger.success(f"Model structure saved to: {output_path}")
     # -----------------------------------------
 
 

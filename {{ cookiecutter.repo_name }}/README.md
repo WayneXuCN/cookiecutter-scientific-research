@@ -1,8 +1,8 @@
 # <p align="center"> {{cookiecutter.project_name}} </p>
 
-##### <p align="center"> [{{ cookiecutter.author_name }}<sup>1,2</sup>](https://wenjiexucn.github.io/), Author<sup>1</sup>, Author<sup>2</sup>
+##### <p align="center"> [{{ cookiecutter.author_name }}](https://your-homepage.com/), Author<sup>1</sup>, Author<sup>2</sup>
 
-##### <p align="center"> <sup>1</sup>Institutes of Science and Development, Chinese Academy of Sciences, Beijing 100190, China; <br> <sup>2</sup>School of Public Policy and Management, University of Chinese Academy of Sciences, Beijing 100049, China</p>
+##### <p align="center"> <sup>1</sup>Your Institution, City, Country; <br> <sup>2</sup>Your Second Institution, City, Country</p>
 
 {{cookiecutter.description}}
 
@@ -22,22 +22,20 @@
 │
 ├── models             <- Trained and serialized models, model predictions, or model summaries
 │
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
+├── notebooks          <- Jupyter/Marimo notebooks. Naming convention is a number (for ordering),
 │                         the creator's initials, and a short `-` delimited description, e.g.
 │                         `1.0-jqp-initial-data-exploration`.
 │
-├── pyproject.toml     <- Project configuration file with package metadata for 
-│                         {{ cookiecutter.module_name }} and configuration for tools like black
+├── pyproject.toml     <- Project configuration file with package metadata for
+│                         {{ cookiecutter.module_name }} and configuration for tools
 │
 ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
 │
 ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-│   └── figures        <- Generated graphics and figures to be used in reporting
+│   ├── figures        <- Generated graphics and figures to be used in reporting
+│   └── logs           <- Experiment logs
 │
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
-│
-├── setup.cfg          <- Configuration file for flake8
+├── tests              <- Test directory
 │
 └── {{ cookiecutter.module_name }}   <- Source code for use in this project.
     │
@@ -45,16 +43,34 @@
     │
     ├── config.py               <- Store useful variables and configuration
     │
-    ├── dataset.py              <- Scripts to download or generate data
+    ├── data                    <- Data acquisition and loading
+    │   ├── __init__.py
+    │   └── dataset.py          <- Scripts to download or generate data
     │
-    ├── features.py             <- Code to create features for modeling
+    ├── analyze                 <- Data analysis module
+    │   ├── __init__.py
+    │   └── analysis.py
     │
-    ├── modeling                
-    │   ├── __init__.py 
-    │   ├── predict.py          <- Code to run model inference with trained models          
-    │   └── train.py            <- Code to train models
+    ├── features                <- Feature engineering
+    │   ├── __init__.py
+    │   └── features.py         <- Code to create features for modeling
     │
-    └── plots.py                <- Code to create visualizations
+    ├── models                  <- Model definitions
+    │   ├── __init__.py
+    │   └── model.py            <- Model architecture
+    │
+    ├── training                <- Model training and prediction
+    │   ├── __init__.py
+    │   ├── train.py            <- Code to train models
+    │   └── predict.py          <- Code to run model inference
+    │
+    ├── visualization           <- Data visualization
+    │   ├── __init__.py
+    │   └── plots.py            <- Code to create visualizations
+    │
+    └── utils                   <- Utility functions
+        ├── __init__.py
+        └── tools.py            <- General utilities
 ```
 
 --------
@@ -82,12 +98,29 @@ This project addresses [clearly state research question] through [brief methodol
 ### Environment Setup
 
 ```bash
-# Create conda environment (recommended)
+{% if cookiecutter.environment_manager == 'uv' -%}
+# Create virtual environment with uv (recommended)
+uv venv
+source .venv/bin/activate  # Unix/macOS
+# .venv\Scripts\activate   # Windows
+uv sync
+{% elif cookiecutter.environment_manager == 'conda' -%}
+# Create conda environment
 conda env create -f environment.yml
-conda activate {{cookiecutter.module_name}}
-
-# Alternative: pip installation
-python -m pip install -r requirements.txt
+conda activate {{cookiecutter.repo_name}}
+{% elif cookiecutter.environment_manager == 'pipenv' -%}
+# Create pipenv environment
+pipenv install
+pipenv shell
+{% elif cookiecutter.environment_manager == 'virtualenv' -%}
+# Create virtualenv environment
+virtualenv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+{% else -%}
+# Install dependencies
+pip install -r requirements.txt
+{% endif -%}
 ```
 
 ### Data Acquisition

@@ -17,12 +17,18 @@ clean:
 	@echo "Delete compiled Python files..."
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
+{% if cookiecutter.notebook == 'jupyterlab' %}
 	@echo "Cleaning Jupyter Notebooks cache..."
-	find . -name "*.ipynb" -exec nb-clean clean {} \;
+	find . -name "*.ipynb" -exec jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace {} \; 2>/dev/null || true
+{% endif %}
+{% if cookiecutter.notebook == 'marimo' %}
 	@echo "Cleaning Marimo cache..."
-	find . -type d -name "__marimo__" -exec rm -rf {} +
+	find . -type d -name "__marimo__" -exec rm -rf {} + 2>/dev/null || true
+{% endif %}
+{% if cookiecutter.linting_and_formatting == 'ruff' %}
 	@echo "Cleaning ruff cache..."
 	ruff clean
+{% endif %}
 
 
 {% if cookiecutter.linting_and_formatting == 'ruff' %}
@@ -125,7 +131,7 @@ create_environment:
 ## Make dataset
 .PHONY: data
 data: requirements
-	$(PYTHON_INTERPRETER) {{ cookiecutter.module_name }}/dataset.py
+	$(PYTHON_INTERPRETER) {{ cookiecutter.module_name }}/data/dataset.py
 {% endif %}
 
 #################################################################################

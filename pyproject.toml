@@ -7,7 +7,7 @@ name = "ccsr"
 
 [project]
 name = "cookiecutter-scientific-research"
-version = "1.1.0"
+version = "1.2.0"
 description = "A logical, reasonably standardized but flexible project structure for doing and sharing scientific research."
 authors = [
   { name = "Wenjie Xu", email = "wenjie.xu.cn@outlook.com" },
@@ -62,6 +62,6 @@ docs = [
 ccsr = "ccsr.__main__:main"
 
 [project.urls]
-"Source Code" = "https://github.com/waynexucn/cookiecutter-scientific-research/"
-"Documentation" = "https://github.com/waynexucn/cookiecutter-scientific-research/blob/master/README.md"
-"Issues" = "https://github.com/waynexucn/cookiecutter-scientific-research/issues"
+"Source Code" = "https://github.com/vncntvx/cookiecutter-scientific-research/"
+"Documentation" = "https://github.com/vncntvx/cookiecutter-scientific-research/blob/master/README.md"
+"Issues" = "https://github.com/vncntvx/cookiecutter-scientific-research/issues"

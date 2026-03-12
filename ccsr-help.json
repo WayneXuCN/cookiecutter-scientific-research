@@ -402,5 +402,42 @@
                 } 
             }
         ]
+    },
+    {
+        "field": "agent_guidance",
+        "help": {
+            "description": "Whether to include AI agent guidance files for coding assistants.",
+            "more_information": ""
+        },
+        "choices": [
+            {
+                "choice": "none",
+                "help": {
+                    "description": "No agent guidance files.",
+                    "more_information": ""
+                }
+            },
+            {
+                "choice": "claude",
+                "help": {
+                    "description": "Include CLAUDE.md for Claude Code/Claude Desktop.",
+                    "more_information": "[Claude Code](https://docs.anthropic.com/en/docs/claude-code)"
+                }
+            },
+            {
+                "choice": "openai",
+                "help": {
+                    "description": "Include AGENTS.md for OpenAI Agents and other compatible tools.",
+                    "more_information": "[OpenAI Agents](https://platform.openai.com/docs/guides/agents)"
+                }
+            },
+            {
+                "choice": "both",
+                "help": {
+                    "description": "Include both CLAUDE.md and AGENTS.md for maximum compatibility.",
+                    "more_information": ""
+                }
+            }
+        ]
     }
 ]

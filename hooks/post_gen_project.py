@@ -112,6 +112,22 @@ write_custom_config("{{ cookiecutter.custom_config }}")
 if "{{ cookiecutter.open_source_license }}" == "No license file":
     Path("LICENSE").unlink()
 
+agent_guidance = "{{ cookiecutter.agent_guidance }}"
+claude_file = Path("CLAUDE.md")
+agents_file = Path("AGENTS.md")
+
+if agent_guidance == "none":
+    if claude_file.exists():
+        claude_file.unlink()
+    if agents_file.exists():
+        agents_file.unlink()
+elif agent_guidance == "claude":
+    if agents_file.exists():
+        agents_file.unlink()
+elif agent_guidance == "openai":
+    if claude_file.exists():
+        claude_file.unlink()
+
 # Make single quotes prettier
 # Jinja tojson escapes single-quotes with \u0027 since it's meant for HTML/JS
 pyproject_text = Path("pyproject.toml").read_text()

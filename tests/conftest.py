@@ -7,7 +7,6 @@ from itertools import cycle, product
 from pathlib import Path
 
 import pytest
-
 from ccsr.__main__ import api_main
 
 ccsr_ROOT = Path(__file__).parents[1].resolve()
@@ -74,6 +73,7 @@ def config_generator(fast=False):
         "docs",
         "notebook",
         "testing_framework",
+        "agent_guidance",
     ]
     multi_select_cyclers = {k: cycle(cookiecutter_json[k]) for k in cycle_fields}
 

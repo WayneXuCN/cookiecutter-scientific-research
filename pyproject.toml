@@ -37,13 +37,11 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "flit_core",
     "ansi2html",
-    "black",
     "build",
-    "flake8",
-    "isort",
+    "flit_core",
     "pytest",
+    "ruff",
     "twine",
 ]
 
@@ -65,3 +63,40 @@ ccsr = "ccsr.__main__:main"
 "Source Code" = "https://github.com/vncntvx/cookiecutter-scientific-research/"
 "Documentation" = "https://github.com/vncntvx/cookiecutter-scientific-research/blob/master/README.md"
 "Issues" = "https://github.com/vncntvx/cookiecutter-scientific-research/issues"
+
+[tool.ruff]
+line-length = 88
+src = ["ccsr", "hooks", "tests"]
+include = ["pyproject.toml", "ccsr/**/*.py", "hooks/**/*.py", "tests/**/*.py"]
+exclude = [
+    ".eggs",
+    "*.egg-info",
+    ".git",
+    ".mypy_cache",
+    "__pycache__",
+    ".venv",
+    "build",
+    "dist",
+    "{{ cookiecutter.repo_name }}",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501", # Line length (handled by formatter)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"ccsr/__main__.py" = ["E402"]  # Module imports must be at top, but monkey-patching requires specific order
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

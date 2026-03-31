@@ -2,7 +2,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from subprocess import PIPE, run
+from subprocess import run
 
 from conftest import bake_project
 
@@ -90,6 +90,21 @@ def verify_folders(root, config):
     if config.get("testing_framework", "none") != "none":
         expected_dirs += ["tests"]
 
+    # Agent guidance directories
+    agent_guidance = config.get("agent_guidance", "none")
+    if agent_guidance in ("claude", "both"):
+        expected_dirs += [
+            ".claude",
+            ".claude/skills",
+            ".claude/skills/uv-package-manager",
+        ]
+    if agent_guidance in ("openai", "both"):
+        expected_dirs += [
+            ".agents",
+            ".agents/skills",
+            ".agents/skills/uv-package-manager",
+        ]
+
     expected_dirs = [
         #  (root / d).resolve().relative_to(root) for d in expected_dirs
         Path(d)
@@ -166,6 +181,19 @@ def verify_files(root, config):
             "tests/test_data.py",
         ]
 
+    # Agent guidance files
+    agent_guidance = config.get("agent_guidance", "none")
+    if agent_guidance in ("claude", "both"):
+        expected_files += [
+            "CLAUDE.md",
+            ".claude/skills/uv-package-manager/SKILL.md",
+        ]
+    if agent_guidance in ("openai", "both"):
+        expected_files += [
+            "AGENTS.md",
+            ".agents/skills/uv-package-manager/SKILL.md",
+        ]
+
     expected_files.append(config["dependency_file"])
 
     expected_files = [Path(f) for f in expected_files]
@@ -207,8 +235,7 @@ def verify_makefile_commands(root, config):
             str(root.resolve()),
             str(config["module_name"]),
         ],
-        stderr=PIPE,
-        stdout=PIPE,
+        capture_output=True,
     )
 
     stdout_output, stderr_output = _decode_print_stdout_stderr(result)

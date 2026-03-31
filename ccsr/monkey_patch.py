@@ -92,8 +92,8 @@ def prompt_for_config(context, no_input=False):
 
                 cookiecutter_dict[key] = val
         except UndefinedError as err:
-            msg = "Unable to render variable '{}'".format(key)
-            raise UndefinedVariableInTemplate(msg, err, context)
+            msg = f"Unable to render variable '{key}'"
+            raise UndefinedVariableInTemplate(msg, err, context) from err
 
     # Second pass; handle the dictionaries.
     for key, raw in context["cookiecutter"].items():
@@ -109,8 +109,8 @@ def prompt_for_config(context, no_input=False):
 
                 cookiecutter_dict[key] = val
         except UndefinedError as err:
-            msg = "Unable to render variable '{}'".format(key)
-            raise UndefinedVariableInTemplate(msg, err, context)
+            msg = f"Unable to render variable '{key}'"
+            raise UndefinedVariableInTemplate(msg, err, context) from err
 
     return cookiecutter_dict
 

@@ -7,9 +7,9 @@ from pathlib import Path
 from ccsr.hook_utils.custom_config import write_custom_config
 from ccsr.hook_utils.dependencies import (
     basic,
+    flake8_black_isort,
     jupyterlab,
     marimo,
-    flake8_black_isort,
     packages,
     ruff,
     scaffold,
@@ -115,18 +115,28 @@ if "{{ cookiecutter.open_source_license }}" == "No license file":
 agent_guidance = "{{ cookiecutter.agent_guidance }}"
 claude_file = Path("CLAUDE.md")
 agents_file = Path("AGENTS.md")
+claude_dir = Path(".claude")
+agents_dir = Path(".agents")
 
 if agent_guidance == "none":
     if claude_file.exists():
         claude_file.unlink()
     if agents_file.exists():
         agents_file.unlink()
+    if claude_dir.exists():
+        shutil.rmtree(claude_dir)
+    if agents_dir.exists():
+        shutil.rmtree(agents_dir)
 elif agent_guidance == "claude":
     if agents_file.exists():
         agents_file.unlink()
+    if agents_dir.exists():
+        shutil.rmtree(agents_dir)
 elif agent_guidance == "openai":
     if claude_file.exists():
         claude_file.unlink()
+    if claude_dir.exists():
+        shutil.rmtree(claude_dir)
 
 # Make single quotes prettier
 # Jinja tojson escapes single-quotes with \u0027 since it's meant for HTML/JS

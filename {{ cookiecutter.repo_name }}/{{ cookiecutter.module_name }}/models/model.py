@@ -1,16 +1,22 @@
+"""Base model class for reusable model patterns.
+
+NOTE: This is an example of MODULAR code - a reusable base class.
+Use this pattern only when you need inheritance/reuse across multiple scripts.
+For one-off experiments, skip the class and work with models directly.
+"""
+import pickle
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from loguru import logger
-import pickle
 
-from {{ cookiecutter.module_name }}.config import MODELS_DIR, PROCESSED_DATA_DIR
+from {{ cookiecutter.module_name }}.config import MODELS_DIR
 
 
 class BaseModel:
     """Base model class for inheritance and extension."""
 
-    def __init__(self, params: Optional[dict[str, Any]] = None):
+    def __init__(self, params: dict[str, Any] | None = None):
         """
         Initialize model.
 

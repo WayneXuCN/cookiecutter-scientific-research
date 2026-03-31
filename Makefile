@@ -17,22 +17,21 @@ _prep:
 
 ## Set up python interpreter environment
 create_environment:
-	conda create --name $(PROJECT_NAME) python=$(PYTHON_VERSION) -y
-	@echo ">>> conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
+	uv venv --python $(PYTHON_VERSION)
+	@echo ">>> uv venv created. Activate with:\nsource .venv/bin/activate"
 
 ## Install Python Dependencies
 requirements:
-	$(PYTHON_INTERPRETER) -m pip install -e ".[dev]"
+	uv sync --all-extras
 
-## Format the code using isort and black
+## Format the code using ruff
 format:
-	isort --profile black ccsr hooks tests
-	black ccsr hooks tests
+	ruff check --fix ccsr hooks tests
+	ruff format ccsr hooks tests
 
 lint:
-	flake8 ccsr hooks tests
-	isort --check --profile black ccsr hooks tests
-	black --check ccsr hooks tests
+	ruff format --check ccsr hooks tests
+	ruff check ccsr hooks tests
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 

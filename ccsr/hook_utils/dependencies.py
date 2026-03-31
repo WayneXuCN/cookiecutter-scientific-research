@@ -72,7 +72,7 @@ def resolve_python_version_specifier(python_version):
 
 
 def write_python_version(python_version):
-    with open("pyproject.toml", "r") as f:
+    with open("pyproject.toml") as f:
         doc = tomlkit.parse(f.read())
 
     doc["project"]["requires-python"] = resolve_python_version_specifier(python_version)
@@ -87,13 +87,13 @@ def write_dependencies(
         with open(dependencies, "w") as f:
             lines = sorted(packages)
 
-            lines += ["" "-e ."]
+            lines += ["-e ."]
 
             f.write("\n".join(lines))
             f.write("\n")
 
     elif dependencies == "pyproject.toml":
-        with open(dependencies, "r") as f:
+        with open(dependencies) as f:
             doc = tomlkit.parse(f.read())
         doc["project"].add("dependencies", sorted(packages))
         doc["project"]["dependencies"].multiline(True)
@@ -118,4 +118,3 @@ def write_dependencies(
             lines += ["    - -e ."]
 
             f.write("\n".join(lines))
-

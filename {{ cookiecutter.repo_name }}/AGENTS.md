@@ -2,28 +2,34 @@
 
 This file provides guidance to coding agents working in this repository.
 
-## Development Environment Setup
+## Available Skills
 
-### Python Environment
+### uv Package Manager
 
-- **Python Version**: 3.12+
-- **Package Manager**: Use `uv` for dependency management
-- **Virtual Environment**: Run `make create_environment` or `uv venv --python 3.12`
+For all Python dependency management and environment tasks, consult:
 
-### Installing Dependencies
+- **Skill Guide**: `.agents/skills/uv-package-manager/SKILL.md`
+- **Key Patterns**: Python version management (`uv python`), virtual environments (`uv venv`), dependencies (`uv add`/`uv sync`), `uv run`, lockfile workflows
+
+## Project Quick Start
+
+### Environment Setup
+
+**This project uses `uv` for all Python environment and dependency management.**
 
 ```bash
-# Sync all dependencies
-uv sync
-
-# Install new packages
-uv add package_name
-
-# Activate environment (if not already active)
+# Create and activate virtual environment
+uv venv --python 3.12
 source .venv/bin/activate  # Unix/macOS
 # or
 .venv\Scripts\activate     # Windows
+
+# Install all dependencies
+uv sync
 ```
+
+**Never use:** `pip`, `pip3`, `python -m pip`, or `activate` + `pip`
+**Always use:** `uv add`, `uv pip`, `uv run`, `uv sync` or `uv lock`
 
 ## Common Development Commands
 
@@ -44,25 +50,6 @@ ruff check
 
 # Clean cache files
 make clean
-```
-
-### Running Code
-
-```bash
-# Run modules directly
-uv run src/training/train.py
-uv run src/data/dataset.py
-
-# Alternative method
-uv run -m src.training.train
-uv run -m src.data.dataset
-```
-
-### Data Processing
-
-```bash
-# Generate datasets
-make data
 ```
 
 ## Code Style Guidelines
@@ -126,11 +113,17 @@ def compute_probability(x: float, y: float) -> float:
 - Use early returns for edge cases
 - Handle `None` explicitly with `| None` types
 
+```python
+def validate_node(node: str, nodes: Sequence[str]) -> None:
+    if node not in nodes:
+        raise ValueError(f"Node '{node}' not in network. Valid nodes: {nodes}")
+```
+
 ### Data Structures
 
-- Use `@dataclass` for simple data containers
-- Use `field(init=False)` for computed attributes
-- Prefer immutable types where possible
+- Prefer plain dictionaries or tuples for simple, single-use data bundles
+- Use `@dataclass` only when the data structure is reused across multiple scripts/modules
+- Avoid over-engineering: a `dict[str, float]` is often clearer than a custom class for one-off cases
 
 ### Logging and Progress
 

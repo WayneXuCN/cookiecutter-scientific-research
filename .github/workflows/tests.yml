@@ -109,10 +109,6 @@ jobs:
           make --version
           which conda
           conda --version
-          which pipenv
-          pipenv --version
-          which virtualenv
-          virtualenv --version
 
       - name: Run tests
         run: |

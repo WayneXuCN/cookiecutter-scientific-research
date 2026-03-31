@@ -108,12 +108,6 @@ create_environment:
 	conda env create --name $(PROJECT_NAME) -f environment.yml
 	{% endif %}
 	@echo ">>> conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
-	{% elif cookiecutter.environment_manager == 'virtualenv' -%}
-	@bash -c "if [ ! -z `which virtualenvwrapper.sh` ]; then source `which virtualenvwrapper.sh`; mkvirtualenv $(PROJECT_NAME) --python=$(PYTHON_INTERPRETER); else mkvirtualenv.bat $(PROJECT_NAME) --python=$(PYTHON_INTERPRETER); fi"
-	@echo ">>> New virtualenv created. Activate with:\nworkon $(PROJECT_NAME)"
-	{% elif cookiecutter.environment_manager == 'pipenv' -%}
-	pipenv --python $(PYTHON_VERSION)
-	@echo ">>> New pipenv created. Activate with:\npipenv shell"
 	{% elif cookiecutter.environment_manager == 'uv' -%}
 	uv venv --python $(PYTHON_VERSION)
 	@echo ">>> New uv virtual environment created. Activate with:"

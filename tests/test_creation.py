@@ -191,10 +191,6 @@ def verify_makefile_commands(root, config):
 
     if config["environment_manager"] == "conda":
         harness_path = test_path / "conda_harness.sh"
-    elif config["environment_manager"] == "virtualenv":
-        harness_path = test_path / "virtualenv_harness.sh"
-    elif config["environment_manager"] == "pipenv":
-        harness_path = test_path / "pipenv_harness.sh"
     elif config["environment_manager"] == "uv":
         harness_path = test_path / "uv_harness.sh"
     elif config["environment_manager"] == "none":

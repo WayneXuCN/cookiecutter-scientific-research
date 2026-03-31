@@ -25,8 +25,7 @@ default_args = {
 def config_generator(fast=False):
     cookiecutter_json = json.load((ccsr_ROOT / "ccsr.json").open("r"))
 
-    # python versions for the created environment; match the root
-    # python version since Pipenv needs to be able to find an executable
+    # python versions for the created environment; match the root python version
     running_py_version = f"{sys.version_info.major}.{sys.version_info.minor}"
     py_version = [("python_version_number", v) for v in [running_py_version]]
 
@@ -42,11 +41,6 @@ def config_generator(fast=False):
 
     def _is_valid(config):
         config = dict(config)
-        #  Pipfile + pipenv only valid combo for either
-        if (config["environment_manager"] == "pipenv") ^ (
-            config["dependency_file"] == "Pipfile"
-        ):
-            return False
         # conda is the only valid env manager for environment.yml
         if (config["dependency_file"] == "environment.yml") and (
             config["environment_manager"] != "conda"

@@ -15,15 +15,12 @@
     "environment_manager": [
         "uv",
         "conda",
-        "pipenv",
-        "virtualenv",
         "none"
     ],
     "dependency_file": [
         "pyproject.toml",
         "requirements.txt",
-        "environment.yml",
-        "Pipfile"
+        "environment.yml"
     ],
     "pydata_packages": [
         "basic",

@@ -108,15 +108,6 @@ uv sync
 # Create conda environment
 conda env create -f environment.yml
 conda activate {{cookiecutter.repo_name}}
-{% elif cookiecutter.environment_manager == 'pipenv' -%}
-# Create pipenv environment
-pipenv install
-pipenv shell
-{% elif cookiecutter.environment_manager == 'virtualenv' -%}
-# Create virtualenv environment
-virtualenv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
 {% else -%}
 # Install dependencies
 pip install -r requirements.txt

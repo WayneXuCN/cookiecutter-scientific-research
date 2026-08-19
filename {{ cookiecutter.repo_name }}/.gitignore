@@ -194,3 +194,13 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Julia
+# Manifest.toml is intentionally tracked for reproducibility
+# (like uv.lock). Uncomment next line to ignore it:
+# Manifest.toml
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+/deps/deps.jl
+/deps/build.log

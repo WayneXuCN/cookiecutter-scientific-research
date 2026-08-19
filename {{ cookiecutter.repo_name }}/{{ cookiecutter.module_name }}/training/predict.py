@@ -3,6 +3,7 @@
 Example exploratory script for model prediction.
 Modify paths directly in this file.
 """
+
 from loguru import logger
 from tqdm import tqdm
 

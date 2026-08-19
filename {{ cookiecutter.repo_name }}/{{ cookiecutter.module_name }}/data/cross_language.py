@@ -3,17 +3,18 @@
 Demonstrates using Arrow/Feather format for sharing data
 between Python and Julia (or other languages).
 """
-import pandas as pd
+
 from loguru import logger
+import pandas as pd
 
 from {{ cookiecutter.module_name }}.config import INTERIM_DATA_DIR, PROCESSED_DATA_DIR
 
 # === Configuration ===
 # Data to send to Julia
-EXPORT_FILE = INTERIM_DATA_DIR / "for_julia.feather"
+EXPORT_FILE = INTERIM_DATA_DIR / "python_to_julia.arrow"
 
 # Data received from Julia
-IMPORT_FILE = INTERIM_DATA_DIR / "from_julia.feather"
+IMPORT_FILE = INTERIM_DATA_DIR / "julia_to_python.arrow"
 
 # Final output
 OUTPUT_FILE = PROCESSED_DATA_DIR / "final_results.parquet"
@@ -31,7 +32,7 @@ df_export.to_feather(EXPORT_FILE)
 
 logger.info("Data exported. Now run your Julia script to process this file.")
 logger.info(
-    "Julia example: using Arrow, DataFrames; df = DataFrame(Arrow.Table('for_julia.feather'))"
+    "Julia example: using Arrow, DataFrames; df = DataFrame(Arrow.Table('python_to_julia.arrow'))"
 )
 
 # === Import from Julia ===

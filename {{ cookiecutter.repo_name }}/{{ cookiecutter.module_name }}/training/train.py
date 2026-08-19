@@ -3,6 +3,7 @@
 Example exploratory script for model training.
 Modify paths and parameters directly in this file.
 """
+
 from loguru import logger
 from tqdm import tqdm
 

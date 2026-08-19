@@ -3,6 +3,7 @@
 Example script for processing large datasets using SQL.
 DuckDB can query Parquet files directly without loading into memory.
 """
+
 import duckdb
 from loguru import logger
 
@@ -16,7 +17,7 @@ OUTPUT_FILE = PROCESSED_DATA_DIR / "aggregated.parquet"
 logger.info(f"Querying Parquet files: {INPUT_PATTERN}")
 
 query = f"""
-    SELECT 
+    SELECT
         category,
         COUNT(*) as count,
         AVG(value) as mean_value,

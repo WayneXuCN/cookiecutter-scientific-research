@@ -3,8 +3,9 @@
 Example script for data preprocessing.
 Reads original data (CSV/JSON/Excel) and saves as Parquet.
 """
-import pandas as pd
+
 from loguru import logger
+import pandas as pd
 from tqdm import tqdm
 
 from {{ cookiecutter.module_name }}.config import PROCESSED_DATA_DIR, RAW_DATA_DIR
@@ -35,4 +36,4 @@ logger.info(f"Saving processed data to {OUTPUT_FILE}")
 # Always save processed data as Parquet
 df.to_parquet(OUTPUT_FILE, compression="snappy")
 
-logger.success(f"Processing complete. Saved to Parquet format.")
+logger.success("Processing complete. Saved to Parquet format.")

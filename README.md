@@ -20,12 +20,19 @@ Cookiecutter Scientific Research is a project template generator designed for sc
 
 ## ✨ Features
 
+- **Dual Structure Modes** - `exploratory` (lightweight, script-first for rapid iteration) and `structured` (layered package for production pipelines)
+
+- **Multi-Language Support** - Choose `python`, `julia`, or `both` (hybrid with Arrow/Parquet interchange)
+
 - **Standardized Project Structure** - Conforms to best practices for modern scientific computing projects
 
 - **Reproducible Experimental Environment** - Built-in environment management and dependency locking mechanisms
+
 - **Integrated Documentation System** - Preconfigured MkDocs documentation for showcasing research results
+
 - **Testing and Quality Control** - Built-in testing frameworks and code quality tools
-- **Modern Package Management** - Simplifies dependency management using modern tools like uv/pip
+
+- **Modern Package Management** - `uv` for Python, `Pkg` for Julia, with separated `make` targets (`lint-py`/`lint-jl`, `data-py`/`data-jl`, etc.)
 
 ## 🚀 Quick Start
 
@@ -122,6 +129,8 @@ The generated project follows the directory structure below, with each section h
 └── tests              <- Test directory
 ```
 
+> **Two modes:** `structured` keeps the full tree above; `exploratory` keeps only `{{module}}/config.py` + `utils` + flat `scripts/` (Python) or `src/config.jl`+`utils.jl`+`scripts/` (Julia). With `project_language=julia` you get `Project.toml`+`src/` instead of `pyproject.toml`+`{{module}}/`; with `both` you get both trees and Arrow/Feather as interchange (`data/interim/*.arrow`). `make` targets are separated: `lint`/`lint-py` vs `lint-jl`, `data`/`data-py` vs `data-jl`, `create_environment` vs `create_environment-jl`, etc.
+
 ## 🔧 Development Guide
 
 ### Package Management and Building
@@ -148,12 +157,17 @@ The built wheel files and source distribution packages will be saved in the `dis
 
 During the template generation process, you can customize various aspects of the project according to prompts:
 
+- **Project style** - `exploratory` (flat `scripts/` + minimal `config/utils`) vs `structured` (full layered package)
+- **Programming language** - `python`, `julia`, or `both` (hybrid with `Project.toml` + `pyproject.toml`)
 - Project name and module name
 - Author information
 - License type
 - Dependency management method
 - Test framework selection
+- Notebook and linting choices
 - And more
+
+> `structured` preserves the original 7-module scaffold (`data/analyze/features/models/training/visualization/utils`), `exploratory` keeps only `config.py` + `utils` (+ `scripts/`) for fast iteration. For Julia, `.jl` scaffold mirrors the Python one under `src/` and `Project.toml` is committed (like `uv.lock`) for reproducibility.
 
 ## 🙏 Acknowledgements
 

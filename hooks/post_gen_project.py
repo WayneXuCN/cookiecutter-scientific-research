@@ -1,4 +1,5 @@
 import shutil
+import uuid
 from copy import copy
 from pathlib import Path
 
@@ -93,18 +94,110 @@ for docs_template in docs_path.iterdir():
         shutil.rmtree(docs_template)
 
 #
+#  Handle project_language (python / julia / both)
+#
+project_language = "{{ cookiecutter.project_language }}"
+project_style = "{{ cookiecutter.project_style }}"
+
+# Python-only: remove Julia artifacts
+if project_language == "python":
+    julia_src = Path("src")
+    if julia_src.exists():
+        shutil.rmtree(julia_src)
+    proj_toml = Path("Project.toml")
+    if proj_toml.exists():
+        proj_toml.unlink()
+    # Remove Julia scripts if any (keep scripts dir for python)
+    # No extra cleanup needed
+
+# Julia-only: remove Python artifacts
+elif project_language == "julia":
+    py_pkg = Path("{{ cookiecutter.module_name }}")
+    if py_pkg.exists():
+        shutil.rmtree(py_pkg)
+    for py_file in [
+        "pyproject.toml",
+        "requirements.txt",
+        "environment.yml",
+        "setup.cfg",
+    ]:
+        p = Path(py_file)
+        if p.exists():
+            p.unlink()
+    # Remove Python tests (no Julia test scaffold yet)
+    if tests_path.exists():
+        shutil.rmtree(tests_path)
+    # Remove Python-specific dependency artifacts - skip write_dependencies below
+    packages_to_install = []  # no python deps to write
+
+# Both: keep everything, nothing to delete for language
+
+#
+#  Handle project_style == exploratory (lightweight)
+#
+if project_style == "exploratory":
+    # Python exploratory: keep only config.py and utils/, plus __init__.py
+    if project_language in ["python", "both"]:
+        py_pkg = Path("{{ cookiecutter.module_name }}")
+        if py_pkg.exists():
+            for child in list(py_pkg.iterdir()):
+                if child.is_dir() and child.name not in ["utils"]:
+                    shutil.rmtree(child)
+                elif child.is_file() and child.name not in ["__init__.py", "config.py"]:
+                    child.unlink()
+            init_py = py_pkg / "__init__.py"
+            if init_py.exists():
+                pass
+    # Julia exploratory: keep only config.jl, utils.jl, and main module file
+    if project_language in ["julia", "both"]:
+        julia_src = Path("src")
+        if julia_src.exists():
+            for child in list(julia_src.iterdir()):
+                if child.is_dir():
+                    shutil.rmtree(child)
+                elif child.is_file() and child.name not in [
+                    "config.jl",
+                    "utils.jl",
+                    "{{ cookiecutter.module_name }}.jl",
+                ]:
+                    child.unlink()
+    # Ensure scripts directory exists for exploratory (once)
+    Path("scripts").mkdir(exist_ok=True)
+    if not any(Path("scripts").iterdir()):
+        (Path("scripts") / ".gitkeep").write_text("")
+
+# Structured keeps full scaffold - no trimming needed
+# But include_code_scaffold == "No" still applies after this (below)
+
+# Generate unique UUID for Julia Project.toml
+if Path("Project.toml").exists():
+    try:
+        _proj_text = Path("Project.toml").read_text()
+        if "00000000-0000-0000-0000-000000000001" in _proj_text:
+            _proj_text = _proj_text.replace(
+                "00000000-0000-0000-0000-000000000001", str(uuid.uuid4())
+            )
+            Path("Project.toml").write_text(_proj_text)
+    except Exception:
+        pass
+
+#
 #  POST-GENERATION FUNCTIONS
 #
-write_dependencies(
-    "{{ cookiecutter.dependency_file }}",
-    packages_to_install,
-    pip_only_packages,
-    repo_name="{{ cookiecutter.repo_name }}",
-    module_name="{{ cookiecutter.module_name }}",
-    python_version="{{ cookiecutter.python_version_number }}",
-)
-
-write_python_version("{{ cookiecutter.python_version_number }}")
+# Only write Python dependencies if python is part of the project
+if project_language in ["python", "both"]:
+    write_dependencies(
+        "{{ cookiecutter.dependency_file }}",
+        packages_to_install,
+        pip_only_packages,
+        repo_name="{{ cookiecutter.repo_name }}",
+        module_name="{{ cookiecutter.module_name }}",
+        python_version="{{ cookiecutter.python_version_number }}",
+    )
+    write_python_version("{{ cookiecutter.python_version_number }}")
+else:
+    # For julia-only, dependency_file may be pyproject.toml which we deleted; nothing to do
+    pass
 
 write_custom_config("{{ cookiecutter.custom_config }}")
 
@@ -140,17 +233,32 @@ elif agent_guidance == "openai":
 
 # Make single quotes prettier
 # Jinja tojson escapes single-quotes with \u0027 since it's meant for HTML/JS
-pyproject_text = Path("pyproject.toml").read_text()
-Path("pyproject.toml").write_text(pyproject_text.replace(r"\u0027", "'"))
+if Path("pyproject.toml").exists():
+    pyproject_text = Path("pyproject.toml").read_text()
+    Path("pyproject.toml").write_text(pyproject_text.replace(r"\u0027", "'"))
 
 # {% if cookiecutter.include_code_scaffold == "No" %}
 # remove everything except __init__.py so result is an empty package
-for generated_path in Path("{{ cookiecutter.module_name }}").iterdir():
-    if generated_path.is_dir():
-        shutil.rmtree(generated_path)
-    elif generated_path.name != "__init__.py":
-        generated_path.unlink()
-    elif generated_path.name == "__init__.py":
-        # remove any content in __init__.py since it won't be available
-        generated_path.write_text("")
+if project_language in ["python", "both"]:
+    py_pkg_path = Path("{{ cookiecutter.module_name }}")
+    if py_pkg_path.exists():
+        for generated_path in list(py_pkg_path.iterdir()):
+            if generated_path.is_dir():
+                shutil.rmtree(generated_path)
+            elif generated_path.name != "__init__.py":
+                generated_path.unlink()
+            elif generated_path.name == "__init__.py":
+                generated_path.write_text("")
+if project_language in ["julia", "both"]:
+    julia_src_path = Path("src")
+    if julia_src_path.exists():
+        for generated_path in list(julia_src_path.iterdir()):
+            if generated_path.is_dir():
+                shutil.rmtree(generated_path)
+            elif generated_path.name not in ["{{ cookiecutter.module_name }}.jl"]:
+                generated_path.unlink()
+            elif generated_path.name == "{{ cookiecutter.module_name }}.jl":
+                generated_path.write_text(
+                    "module {{ cookiecutter.module_name }}\nend\n"
+                )
 # {% endif %}

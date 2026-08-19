@@ -74,6 +74,8 @@ def config_generator(fast=False):
         "notebook",
         "testing_framework",
         "agent_guidance",
+        "project_style",
+        "project_language",
     ]
     multi_select_cyclers = {k: cycle(cookiecutter_json[k]) for k in cycle_fields}
 
@@ -121,7 +123,7 @@ def fast(request):
 def pytest_generate_tests(metafunc):
     # setup config fixture to get all of the results from config_generator
     def make_test_id(config):
-        return f"{config['environment_manager']}-{config['dependency_file']}-{config['pydata_packages']}"
+        return f"{config['environment_manager']}-{config['dependency_file']}-{config['pydata_packages']}-{config.get('project_style', '')}-{config.get('project_language', '')}"
 
     if "config" in metafunc.fixturenames:
         metafunc.parametrize(

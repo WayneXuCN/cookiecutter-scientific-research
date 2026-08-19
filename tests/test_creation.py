@@ -56,6 +56,9 @@ def test_baking_configs(config, fast):
 
 def verify_folders(root, config):
     """Tests that expected folders and only expected folders exist."""
+    project_language = config.get("project_language", "python")
+    project_style = config.get("project_style", "structured")
+
     expected_dirs = [
         ".",
         "data",
@@ -70,24 +73,50 @@ def verify_folders(root, config):
         "reports",
         "reports/figures",
         "reports/logs",
-        config["module_name"],
+        "scripts",
     ]
 
-    if config["include_code_scaffold"] == "Yes":
-        expected_dirs += [
-            f"{config['module_name']}/data",
-            f"{config['module_name']}/analyze",
-            f"{config['module_name']}/features",
-            f"{config['module_name']}/models",
-            f"{config['module_name']}/training",
-            f"{config['module_name']}/visualization",
-            f"{config['module_name']}/utils",
-        ]
+    # Python package dirs
+    if project_language in ["python", "both"]:
+        expected_dirs += [config["module_name"]]
+        if config["include_code_scaffold"] == "Yes":
+            if project_style == "structured":
+                expected_dirs += [
+                    f"{config['module_name']}/data",
+                    f"{config['module_name']}/analyze",
+                    f"{config['module_name']}/features",
+                    f"{config['module_name']}/models",
+                    f"{config['module_name']}/training",
+                    f"{config['module_name']}/visualization",
+                    f"{config['module_name']}/utils",
+                ]
+            else:  # exploratory - only utils remains
+                expected_dirs += [
+                    f"{config['module_name']}/utils",
+                ]
+
+    # Julia src dirs
+    if project_language in ["julia", "both"]:
+        expected_dirs += ["src"]
+        if config["include_code_scaffold"] == "Yes" and project_style == "structured":
+            expected_dirs += [
+                "src/data",
+                "src/analyze",
+                "src/features",
+                "src/models",
+                "src/training",
+                "src/visualization",
+            ]
+        # exploratory has no subdirs
 
     if config["docs"] == "mkdocs":
         expected_dirs += ["docs/docs"]
 
-    if config.get("testing_framework", "none") != "none":
+    # Tests only for python (julia tests not scaffolded)
+    if (
+        project_language in ["python", "both"]
+        and config.get("testing_framework", "none") != "none"
+    ):
         expected_dirs += ["tests"]
 
     # Agent guidance directories
@@ -95,12 +124,14 @@ def verify_folders(root, config):
     if agent_guidance in ("claude", "both"):
         expected_dirs += [
             ".claude",
+            ".claude/rules",
             ".claude/skills",
             ".claude/skills/uv-package-manager",
         ]
     if agent_guidance in ("openai", "both"):
         expected_dirs += [
             ".agents",
+            ".agents/rules",
             ".agents/skills",
             ".agents/skills/uv-package-manager",
         ]
@@ -120,11 +151,13 @@ def verify_folders(root, config):
 
 def verify_files(root, config):
     """Test that expected files and only expected files exist."""
+    project_language = config.get("project_language", "python")
+    project_style = config.get("project_style", "structured")
+
     expected_files = [
         ".gitattributes",
         "Makefile",
         "README.md",
-        "pyproject.toml",
         ".env",
         ".gitignore",
         "data/external/.gitkeep",
@@ -138,35 +171,88 @@ def verify_files(root, config):
         "reports/figures/.gitkeep",
         "reports/logs/.gitkeep",
         "models/.gitkeep",
-        f"{config['module_name']}/__init__.py",
+        "scripts/.gitkeep",
     ]
+
+    # Python files
+    if project_language in ["python", "both"]:
+        expected_files += [
+            "pyproject.toml",
+            f"{config['module_name']}/__init__.py",
+        ]
+        if config["include_code_scaffold"] == "Yes":
+            if project_style == "structured":
+                expected_files += [
+                    f"{config['module_name']}/config.py",
+                    f"{config['module_name']}/data/__init__.py",
+                    f"{config['module_name']}/data/dataset.py",
+                    f"{config['module_name']}/data/cross_language.py",
+                    f"{config['module_name']}/data/large_query.py",
+                    f"{config['module_name']}/analyze/__init__.py",
+                    f"{config['module_name']}/analyze/analysis.py",
+                    f"{config['module_name']}/features/__init__.py",
+                    f"{config['module_name']}/features/features.py",
+                    f"{config['module_name']}/models/__init__.py",
+                    f"{config['module_name']}/models/model.py",
+                    f"{config['module_name']}/training/__init__.py",
+                    f"{config['module_name']}/training/train.py",
+                    f"{config['module_name']}/training/predict.py",
+                    f"{config['module_name']}/visualization/__init__.py",
+                    f"{config['module_name']}/visualization/plots.py",
+                    f"{config['module_name']}/utils/__init__.py",
+                    f"{config['module_name']}/utils/tools.py",
+                ]
+            else:  # exploratory - only config + utils
+                expected_files += [
+                    f"{config['module_name']}/config.py",
+                    f"{config['module_name']}/utils/__init__.py",
+                    f"{config['module_name']}/utils/tools.py",
+                ]
+        else:
+            # include_code_scaffold No - only __init__.py (already added) - empty
+            pass
+        # dependency_file for python
+        dep_file = config["dependency_file"]
+        if dep_file != "pyproject.toml":
+            expected_files.append(dep_file)
+        # For python, pyproject.toml already added; if dep_file is pyproject, don't duplicate
+        # But original appended dep_file unconditionally; we handle via set later
+
+    # Julia files
+    if project_language in ["julia", "both"]:
+        expected_files += [
+            "Project.toml",
+            f"src/{config['module_name']}.jl",
+        ]
+        if config["include_code_scaffold"] == "Yes":
+            expected_files += [
+                "src/config.jl",
+                "src/utils.jl",
+            ]
+            if project_style == "structured":
+                expected_files += [
+                    "src/data/dataset.jl",
+                    "src/data/cross_language.jl",
+                    "src/data/large_query.jl",
+                    "src/analyze/analysis.jl",
+                    "src/features/features.jl",
+                    "src/models/model.jl",
+                    "src/training/train.jl",
+                    "src/training/predict.jl",
+                    "src/visualization/plots.jl",
+                ]
+        # exploratory has no extra files beyond config/utils
+        # scaffold No: only main module file
 
     # conditional files
     if not config["open_source_license"].startswith("No license"):
         expected_files.append("LICENSE")
 
-    if config["linting_and_formatting"] == "flake8+black+isort":
+    if (
+        project_language in ["python", "both"]
+        and config["linting_and_formatting"] == "flake8+black+isort"
+    ):
         expected_files.append("setup.cfg")
-
-    if config["include_code_scaffold"] == "Yes":
-        expected_files += [
-            f"{config['module_name']}/config.py",
-            f"{config['module_name']}/data/__init__.py",
-            f"{config['module_name']}/data/dataset.py",
-            f"{config['module_name']}/analyze/__init__.py",
-            f"{config['module_name']}/analyze/analysis.py",
-            f"{config['module_name']}/features/__init__.py",
-            f"{config['module_name']}/features/features.py",
-            f"{config['module_name']}/models/__init__.py",
-            f"{config['module_name']}/models/model.py",
-            f"{config['module_name']}/training/__init__.py",
-            f"{config['module_name']}/training/train.py",
-            f"{config['module_name']}/training/predict.py",
-            f"{config['module_name']}/visualization/__init__.py",
-            f"{config['module_name']}/visualization/plots.py",
-            f"{config['module_name']}/utils/__init__.py",
-            f"{config['module_name']}/utils/tools.py",
-        ]
 
     if config["docs"] == "mkdocs":
         expected_files += [
@@ -176,7 +262,10 @@ def verify_files(root, config):
             "docs/docs/getting-started.md",
         ]
 
-    if config.get("testing_framework", "none") != "none":
+    if (
+        project_language in ["python", "both"]
+        and config.get("testing_framework", "none") != "none"
+    ):
         expected_files += [
             "tests/test_data.py",
         ]
@@ -186,21 +275,27 @@ def verify_files(root, config):
     if agent_guidance in ("claude", "both"):
         expected_files += [
             "CLAUDE.md",
+            ".claude/rules/data-formats.md",
+            ".claude/rules/python-style.md",
+            ".claude/rules/testing.md",
             ".claude/skills/uv-package-manager/SKILL.md",
         ]
     if agent_guidance in ("openai", "both"):
         expected_files += [
             "AGENTS.md",
+            ".agents/rules/data-formats.md",
+            ".agents/rules/python-style.md",
+            ".agents/rules/testing.md",
             ".agents/skills/uv-package-manager/SKILL.md",
         ]
-
-    expected_files.append(config["dependency_file"])
 
     expected_files = [Path(f) for f in expected_files]
 
     existing_files = [f.relative_to(root) for f in root.glob("**/*") if f.is_file()]
 
-    assert sorted(existing_files) == sorted(set(expected_files))
+    assert sorted(existing_files) == sorted(set(expected_files)), (
+        f"Expected {sorted(set(expected_files))} but got {sorted(existing_files)} diff: extra {sorted(set(existing_files) - set(expected_files))} missing {sorted(set(expected_files) - set(existing_files))}"
+    )
 
     for f in existing_files:
         assert no_curlies(root / f)
@@ -215,6 +310,19 @@ def verify_makefile_commands(root, config):
     - formatting
     Ensure that these use the proper environment.
     """
+    project_language = config.get("project_language", "python")
+    # For julia-only, python harness not applicable - just check make help
+    if project_language == "julia":
+        result = run(
+            [BASH_EXECUTABLE, "-c", f"cd {root.resolve()} && make help"],
+            capture_output=True,
+        )
+        stdout_output, stderr_output = _decode_print_stdout_stderr(result)
+        assert "Available rules:" in stdout_output
+        assert "clean" in stdout_output
+        assert result.returncode == 0
+        return
+
     test_path = Path(__file__).parent
 
     if config["environment_manager"] == "conda":
@@ -244,14 +352,15 @@ def verify_makefile_commands(root, config):
     assert "Available rules:" in stdout_output
     assert "clean" in stdout_output
 
-    # Check that linting and formatting ran successfully
-    if config["linting_and_formatting"] == "ruff":
-        assert "All checks passed!" in stdout_output
-        assert "left unchanged" in stdout_output
-        assert "reformatted" not in stdout_output
-    elif config["linting_and_formatting"] == "flake8+black+isort":
-        assert "All done!" in stderr_output
-        assert "left unchanged" in stderr_output
-        assert "reformatted" not in stderr_output
+    # Check that linting and formatting ran successfully (only for python)
+    if project_language in ["python", "both"]:
+        if config["linting_and_formatting"] == "ruff":
+            assert "All checks passed!" in stdout_output
+            assert "left unchanged" in stdout_output
+            assert "reformatted" not in stdout_output
+        elif config["linting_and_formatting"] == "flake8+black+isort":
+            assert "All done!" in stderr_output
+            assert "left unchanged" in stderr_output
+            assert "reformatted" not in stderr_output
 
     assert result.returncode == 0

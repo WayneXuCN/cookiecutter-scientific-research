@@ -42,6 +42,59 @@
         }
     },
     {
+        "field": "project_style",
+        "help": {
+            "description": "Project structure style: exploratory (lightweight, script-first for rapid iteration) vs structured (layered package for production pipelines).",
+            "more_information": ""
+        },
+        "choices": [
+            {
+                "choice": "exploratory",
+                "help": {
+                    "description": "Lightweight layout with flat scripts/ and minimal source scaffold, optimized for fast academic iteration.",
+                    "more_information": ""
+                }
+            },
+            {
+                "choice": "structured",
+                "help": {
+                    "description": "Full layered package with data/analyze/features/models/training/visualization submodules, for production-grade projects.",
+                    "more_information": ""
+                }
+            }
+        ]
+    },
+    {
+        "field": "project_language",
+        "help": {
+            "description": "Primary programming language(s) for the project.",
+            "more_information": ""
+        },
+        "choices": [
+            {
+                "choice": "python",
+                "help": {
+                    "description": "Python-only project using pyproject.toml and uv/conda.",
+                    "more_information": ""
+                }
+            },
+            {
+                "choice": "julia",
+                "help": {
+                    "description": "Julia-only project using Project.toml and Pkg.",
+                    "more_information": ""
+                }
+            },
+            {
+                "choice": "both",
+                "help": {
+                    "description": "Hybrid Python + Julia project with both toolchains and Arrow/Parquet as interchange.",
+                    "more_information": ""
+                }
+            }
+        ]
+    },
+    {
         "field": "python_version_number",
         "help": {
             "description": "The version of Python that the project will use.",

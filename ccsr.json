@@ -1,5 +1,7 @@
 {
     "project_name": "project_name",
+    "project_style": ["structured", "exploratory"],
+    "project_language": ["python", "julia", "both"],
     "repo_name": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
     "module_name": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
     "author_name": "Wenjie Xu",

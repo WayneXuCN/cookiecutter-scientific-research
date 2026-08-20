@@ -385,21 +385,21 @@
     {
         "field": "include_code_scaffold",
         "help": {
-            "description": "Whether to include some basic boilerplate code in the Python module.",
+            "description": "Whether to include recommended example code for the selected project_style (exploratory: 3 linear scripts + config/utils; structured: layered pipeline with 5 modules).",
             "more_information": ""
         },
         "choices": [
             {
                 "choice": "Yes",
                 "help": {
-                    "description": "Includes common data submodules.",
+                    "description": "Include style-specific scaffold: exploratory → config + utils + 3 example scripts; structured → data/features/models/visualization/utils pipeline.",
                     "more_information": ""
                 } 
             },
             {
                 "choice": "No",
                 "help": {
-                    "description": "Empty Python module to start with.",
+                    "description": "Empty package (only __init__.py / Module.jl), start from scratch.",
                     "more_information": ""
                 } 
             }
@@ -438,15 +438,15 @@
     {
         "field": "agent_guidance",
         "help": {
-            "description": "Whether to include AI agent guidance files for coding assistants.",
+            "description": "Which AI agent guidance files to include (AGENTS.md is default).",
             "more_information": ""
         },
         "choices": [
             {
-                "choice": "none",
+                "choice": "openai",
                 "help": {
-                    "description": "No agent guidance files.",
-                    "more_information": ""
+                    "description": "Include AGENTS.md for OpenAI Agents and compatible tools (default).",
+                    "more_information": "[OpenAI Agents](https://platform.openai.com/docs/guides/agents)"
                 }
             },
             {
@@ -454,13 +454,6 @@
                 "help": {
                     "description": "Include CLAUDE.md for Claude Code/Claude Desktop.",
                     "more_information": "[Claude Code](https://docs.anthropic.com/en/docs/claude-code)"
-                }
-            },
-            {
-                "choice": "openai",
-                "help": {
-                    "description": "Include AGENTS.md for OpenAI Agents and other compatible tools.",
-                    "more_information": "[OpenAI Agents](https://platform.openai.com/docs/guides/agents)"
                 }
             },
             {

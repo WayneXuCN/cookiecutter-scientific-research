@@ -37,41 +37,57 @@
 │
 ├── tests              <- Test directory
 │
-└── {{ cookiecutter.module_name }}   <- Source code for use in this project.
-    │
+{% if cookiecutter.project_style == "exploratory" -%}
+├── {{ cookiecutter.module_name }}   <- Minimal package (exploratory)
+│   ├── __init__.py
+│   ├── config.py               <- Store useful variables and configuration
+│   └── utils                   <- Utility functions
+│       ├── __init__.py
+│       └── tools.py
+└── scripts            <- Exploratory scripts (linear, top-to-bottom)
+    ├── 01_process_data.py{% if cookiecutter.project_language in ["julia","both"] %} / .jl{% endif %}
+    ├── 02_analyze.py{% if cookiecutter.project_language in ["julia","both"] %} / .jl{% endif %}
+    └── 03_train_predict.py{% if cookiecutter.project_language in ["julia","both"] %} / .jl{% endif %}
+{% else -%}
+└── {{ cookiecutter.module_name }}   <- Source code (structured pipeline, 5 modules)
     ├── __init__.py             <- Makes {{ cookiecutter.module_name }} a Python module
-    │
     ├── config.py               <- Store useful variables and configuration
-    │
     ├── data                    <- Data acquisition and loading
     │   ├── __init__.py
-    │   └── dataset.py          <- Scripts to download or generate data
-    │
-    ├── analyze                 <- Data analysis module
-    │   ├── __init__.py
-    │   └── analysis.py
-    │
+    │   └── make_dataset.py     <- Scripts to download or generate data (raw → processed Parquet)
     ├── features                <- Feature engineering
     │   ├── __init__.py
-    │   └── features.py         <- Code to create features for modeling
-    │
-    ├── models                  <- Model definitions
+    │   └── build_features.py   <- Code to create features for modeling
+    ├── models                  <- Model training
     │   ├── __init__.py
-    │   └── model.py            <- Model architecture
-    │
-    ├── training                <- Model training and prediction
-    │   ├── __init__.py
-    │   ├── train.py            <- Code to train models
-    │   └── predict.py          <- Code to run model inference
-    │
+    │   └── train_model.py      <- Code to train and persist models
     ├── visualization           <- Data visualization
     │   ├── __init__.py
-    │   └── plots.py            <- Code to create visualizations
-    │
+    │   └── visualize.py        <- Code to create visualizations
     └── utils                   <- Utility functions
         ├── __init__.py
         └── tools.py            <- General utilities
+{% if cookiecutter.project_language in ["julia","both"] -%}
+└── src                   <- Julia source (mirrors Python pipeline)
+    ├── {{ cookiecutter.module_name }}.jl
+    ├── config.jl
+    ├── data/make_dataset.jl
+    ├── features/build_features.jl
+    ├── models/train_model.jl
+    ├── visualization/visualize.jl
+    └── utils.jl
+{% endif -%}
+{% endif -%}
 ```
+
+{% if cookiecutter.project_style == "exploratory" %}
+> **Mode: exploratory** — script-first, 3 linear scripts in `scripts/` for rapid iteration. Promote to `{{ cookiecutter.module_name }}/` only after copy-paste ×3.
+{% else %}
+> **Mode: structured** — pipeline-first, 5 modules for reusable, testable workflow. One-offs still go to `scripts/` or `notebooks/`.
+{% endif %}
+{% if cookiecutter.project_language == "both" %}
+> **Language: both** — Python ↔ Julia via `data/interim/*.arrow` (Arrow/Feather). See `data/cross_language.*`.
+{% endif %}
 
 --------
 
@@ -92,12 +108,13 @@ This project addresses [clearly state research question] through [brief methodol
 ### System Requirements
 
 - ​**OS**: Linux/macOS/Windows (Tested on Ubuntu 22.04 LTS)
-- ​**Python**: ≥3.10
+- ​**Python**: ≥3.10{% if cookiecutter.project_language in ["julia","both"] %} / **Julia**: ≥1.10{% endif %}
 - ​**Hardware**: [Specify if needed, e.g., NVIDIA GPU with CUDA 12.x]
 
 ### Environment Setup
 
 ```bash
+{% if cookiecutter.project_language in ["python","both"] -%}
 {% if cookiecutter.environment_manager == 'uv' -%}
 # Create virtual environment with uv (recommended)
 uv venv
@@ -111,6 +128,11 @@ conda activate {{cookiecutter.repo_name}}
 {% else -%}
 # Install dependencies
 pip install -r requirements.txt
+{% endif -%}
+{% endif -%}
+{% if cookiecutter.project_language in ["julia","both"] -%}
+# Julia
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
 {% endif -%}
 ```
 

@@ -107,8 +107,16 @@ if project_language == "python":
     proj_toml = Path("Project.toml")
     if proj_toml.exists():
         proj_toml.unlink()
-    # Remove Julia scripts if any (keep scripts dir for python)
-    # No extra cleanup needed
+    # Remove Julia scripts
+    for jl_script in Path("scripts").glob("*.jl"):
+        try:
+            jl_script.unlink()
+        except FileNotFoundError:
+            pass
+    # Remove Julia-specific agent rules/skills
+    for p in [Path(".agents/rules/julia-style.md"), Path(".claude/rules/julia-style.md")]:
+        if p.exists():
+            p.unlink()
 
 # Julia-only: remove Python artifacts
 elif project_language == "julia":
@@ -127,13 +135,27 @@ elif project_language == "julia":
     # Remove Python tests (no Julia test scaffold yet)
     if tests_path.exists():
         shutil.rmtree(tests_path)
-    # Remove Python-specific dependency artifacts - skip write_dependencies below
+    # Remove Python scripts
+    for py_script in Path("scripts").glob("*.py"):
+        try:
+            py_script.unlink()
+        except FileNotFoundError:
+            pass
+    # Remove Python-specific agent rules/skills
+    for p in [Path(".agents/rules/python-style.md"), Path(".claude/rules/python-style.md")]:
+        if p.exists():
+            p.unlink()
+    # Also remove uv skill if present (Python-only)
+    for skill in [Path(".agents/skills/uv-package-manager"), Path(".claude/skills/uv-package-manager")]:
+        if skill.exists():
+            shutil.rmtree(skill)
     packages_to_install = []  # no python deps to write
 
-# Both: keep everything, nothing to delete for language
+# Both: keep everything, but handle rules appropriately (keep both styles)
+# Remove nothing for both — keep python and julia scripts/rules
 
 #
-#  Handle project_style == exploratory (lightweight)
+#  Handle project_style
 #
 if project_style == "exploratory":
     # Python exploratory: keep only config.py and utils/, plus __init__.py
@@ -145,9 +167,6 @@ if project_style == "exploratory":
                     shutil.rmtree(child)
                 elif child.is_file() and child.name not in ["__init__.py", "config.py"]:
                     child.unlink()
-            init_py = py_pkg / "__init__.py"
-            if init_py.exists():
-                pass
     # Julia exploratory: keep only config.jl, utils.jl, and main module file
     if project_language in ["julia", "both"]:
         julia_src = Path("src")
@@ -161,13 +180,41 @@ if project_style == "exploratory":
                     "{{ cookiecutter.module_name }}.jl",
                 ]:
                     child.unlink()
-    # Ensure scripts directory exists for exploratory (once)
-    Path("scripts").mkdir(exist_ok=True)
-    if not any(Path("scripts").iterdir()):
-        (Path("scripts") / ".gitkeep").write_text("")
-
-# Structured keeps full scaffold - no trimming needed
-# But include_code_scaffold == "No" still applies after this (below)
+    # Exploratory keeps scripts examples — ensure gitkeep removed if real scripts exist
+    scripts_path = Path("scripts")
+    scripts_path.mkdir(exist_ok=True)
+    has_scripts = any(scripts_path.glob("*.py")) or any(scripts_path.glob("*.jl"))
+    if has_scripts:
+        gk = scripts_path / ".gitkeep"
+        if gk.exists():
+            gk.unlink()
+    else:
+        # fallback if no scripts remain (e.g., language cleanup removed all)
+        if not any(scripts_path.iterdir()):
+            (scripts_path / ".gitkeep").write_text("")
+else:
+    # Structured: keep full 5-module scaffold, but handle cross-language and scripts
+    # cross_language only for both
+    if project_language != "both":
+        for cl in [
+            Path("{{ cookiecutter.module_name }}/data/cross_language.py"),
+            Path("src/data/cross_language.jl"),
+        ]:
+            if cl.exists():
+                cl.unlink()
+    # Structured keeps scripts minimal — remove example scripts, keep .gitkeep
+    scripts_path = Path("scripts")
+    if scripts_path.exists():
+        for p in list(scripts_path.glob("*.py")):
+            p.unlink()
+        for p in list(scripts_path.glob("*.jl")):
+            p.unlink()
+        scripts_path.mkdir(exist_ok=True)
+        if not (scripts_path / ".gitkeep").exists():
+            (scripts_path / ".gitkeep").write_text("")
+    else:
+        scripts_path.mkdir(parents=True, exist_ok=True)
+        (scripts_path / ".gitkeep").write_text("")
 
 # Generate unique UUID for Julia Project.toml
 if Path("Project.toml").exists():
@@ -196,7 +243,6 @@ if project_language in ["python", "both"]:
     )
     write_python_version("{{ cookiecutter.python_version_number }}")
 else:
-    # For julia-only, dependency_file may be pyproject.toml which we deleted; nothing to do
     pass
 
 write_custom_config("{{ cookiecutter.custom_config }}")
@@ -205,22 +251,18 @@ write_custom_config("{{ cookiecutter.custom_config }}")
 if "{{ cookiecutter.open_source_license }}" == "No license file":
     Path("LICENSE").unlink()
 
+# Handle agent_guidance — now only openai / claude / both (none removed, openai is default)
 agent_guidance = "{{ cookiecutter.agent_guidance }}"
 claude_file = Path("CLAUDE.md")
 agents_file = Path("AGENTS.md")
 claude_dir = Path(".claude")
 agents_dir = Path(".agents")
 
-if agent_guidance == "none":
-    if claude_file.exists():
-        claude_file.unlink()
-    if agents_file.exists():
-        agents_file.unlink()
-    if claude_dir.exists():
-        shutil.rmtree(claude_dir)
-    if agents_dir.exists():
-        shutil.rmtree(agents_dir)
-elif agent_guidance == "claude":
+# Defensive: if old config had none, treat as openai
+if agent_guidance not in ("openai", "claude", "both"):
+    agent_guidance = "openai"
+
+if agent_guidance == "claude":
     if agents_file.exists():
         agents_file.unlink()
     if agents_dir.exists():
@@ -230,6 +272,8 @@ elif agent_guidance == "openai":
         claude_file.unlink()
     if claude_dir.exists():
         shutil.rmtree(claude_dir)
+else:  # both - keep all
+    pass
 
 # Make single quotes prettier
 # Jinja tojson escapes single-quotes with \u0027 since it's meant for HTML/JS
@@ -249,6 +293,16 @@ if project_language in ["python", "both"]:
                 generated_path.unlink()
             elif generated_path.name == "__init__.py":
                 generated_path.write_text("")
+        # scaffold No also clears scripts examples
+        scripts_path = Path("scripts")
+        if scripts_path.exists():
+            for p in list(scripts_path.glob("*.py")):
+                p.unlink()
+            for p in list(scripts_path.glob("*.jl")):
+                p.unlink()
+            scripts_path.mkdir(exist_ok=True)
+            if not (scripts_path / ".gitkeep").exists():
+                (scripts_path / ".gitkeep").write_text("")
 if project_language in ["julia", "both"]:
     julia_src_path = Path("src")
     if julia_src_path.exists():
@@ -261,4 +315,14 @@ if project_language in ["julia", "both"]:
                 generated_path.write_text(
                     "module {{ cookiecutter.module_name }}\nend\n"
                 )
+        # scaffold No also clears scripts for julia — remove all example scripts
+        scripts_path = Path("scripts")
+        if scripts_path.exists():
+            for p in list(scripts_path.glob("*.jl")):
+                p.unlink()
+            for p in list(scripts_path.glob("*.py")):
+                p.unlink()
+            scripts_path.mkdir(exist_ok=True)
+            if not (scripts_path / ".gitkeep").exists():
+                (scripts_path / ".gitkeep").write_text("")
 # {% endif %}

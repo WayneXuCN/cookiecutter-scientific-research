@@ -203,13 +203,13 @@ create_environment: create_environment-py create_environment-jl
 .PHONY: data data-py
 data: data-py
 data-py: requirements
-	$(PYTHON_INTERPRETER) {{ cookiecutter.module_name }}/data/dataset.py
+	$(PYTHON_INTERPRETER) {{ cookiecutter.module_name }}/data/make_dataset.py
 {% endif %}
 {% if cookiecutter.project_language in ["julia", "both"] %}
 ## Make dataset with Julia
 .PHONY: data-jl
 data-jl:
-	julia --project=. src/data/dataset.jl
+	julia --project=. src/data/make_dataset.jl
 {% endif %}
 {% endif %}
 {% if cookiecutter.project_style == 'exploratory' %}

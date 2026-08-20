@@ -1,178 +1,166 @@
-# AGENTS.md
+# AGENTS.md — {{ cookiecutter.project_name }} (`{{ cookiecutter.project_style }}` / `{{ cookiecutter.project_language }}`)
 
 Shared guidance for all coding agents working in this repository.
 
-## Quick Start
+{% if cookiecutter.project_language in ["python", "both"] %}
+## Quick Start — Python{% if cookiecutter.project_language == "both" %} (hybrid){% endif %}
 
 ```bash
-# Environment setup (uses uv, not pip)
-uv venv --python 3.12
-source .venv/bin/activate  # Unix/macOS
+{% if cookiecutter.environment_manager == "uv" -%}
+uv venv --python {{ cookiecutter.python_version_number }} && source .venv/bin/activate
 uv sync
-
-# Code quality
-make format   # ruff format && ruff check --fix
-make lint     # ruff format --check && ruff check
+{% elif cookiecutter.environment_manager == "conda" -%}
+conda env create -f environment.yml && conda activate {{ cookiecutter.repo_name }}
+{% else -%}
+# No environment manager — use your own venv
+{% endif -%}
+{% if cookiecutter.linting_and_formatting == "ruff" -%}
+make lint          # ruff format --check && ruff check
+make format        # ruff format && ruff check --fix
+{% else -%}
+make lint          # black --check && flake8
+make format        # black + isort
+{% endif -%}
 ```
 
-**Package management:** Always use `uv add`, `uv sync`, `uv run` — never `pip`.
+Package management: {% if cookiecutter.environment_manager == "uv" %}always `uv add` / `uv sync` / `uv run` — never `pip`{% elif cookiecutter.environment_manager == "conda" %}`conda` + `pip` via `environment.yml`{% else %}use your preferred manager{% endif %}.
+{% endif %}
+{% if cookiecutter.project_language in ["julia", "both"] %}
+## Quick Start — Julia{% if cookiecutter.project_language == "both" %} (hybrid){% endif %}
 
-## Programming Style Philosophy
+```bash
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+{% if cookiecutter.linting_and_formatting == "ruff" -%}
+make lint-jl       # JuliaFormatter (if configured)
+{% else -%}
+make lint-jl       # JuliaFormatter fallback
+{% endif -%}
+{% if cookiecutter.project_language == "both" -%}
+make lint          # runs lint-py + lint-jl
+{% endif -%}
+```
+{% endif %}
 
-**This is a scientific research project.** Default to exploratory/script-based programming.
+## Programming Philosophy {% if cookiecutter.project_style == "exploratory" %}(Exploratory — script-first){% else %}(Structured — pipeline-first){% endif %}
 
-### Default: Exploratory Style
+{% if cookiecutter.project_style == "exploratory" -%}
+**Default: linear script in `scripts/`.** Fast iteration over abstraction.
 
-**When to use:** Most research tasks — data analysis, experiments, quick explorations.
-
-- Linear, top-to-bottom execution in `.py` files
-- Minimal abstraction: avoid unnecessary functions/classes
-- No `if __name__ == "__main__":` guard needed
-- No command-line argument parsing
+- Top-to-bottom execution, minimal functions/classes
+- No `if __name__ == "__main__":` needed in `scripts/`
+- Hardcode paths via `{{ cookiecutter.module_name }}.config` / `src/config.jl`
 
 ```python
-# analysis_v1.py - Quick exploration
+# scripts/02_analyze.py
 import pandas as pd
-from src.config import DATA_DIR, FIGURES_DIR
+from {{ cookiecutter.module_name }}.config import PROCESSED_DATA_DIR
 
-df = pd.read_parquet(DATA_DIR / "raw" / "data.parquet")
-summary = df.groupby("condition").agg({"metric": ["mean", "std"]})
-print(summary)
+df = pd.read_parquet(PROCESSED_DATA_DIR / "dataset.parquet")
+print(df.describe())
 ```
 
-### When to Switch: Modular Style
+Refactor to `{{ cookiecutter.module_name }}/` only after copy-paste ×3 or need CLI/batch.
+{% else -%}
+**Default: layered pipeline in `{{ cookiecutter.module_name }}/` / `src/`.**
 
-**Triggers:** Same logic copy-pasted 3+ times, need CLI, building shared utilities.
+- `data/make_dataset.py` / `make_dataset.jl` — raw → processed
+- `features/build_features.py` — feature engineering (`def main`)
+- `models/train_model.py` — train & persist (`def main`)
+- `visualization/visualize.py` — figures to `reports/figures`
+- `utils/tools.py` / `utils.jl` — shared helpers only
 
-| Situation | Style |
-|-----------|-------|
-| "Quick plot of results" | Exploratory |
-| "Testing a hypothesis" | Exploratory |
-| "I've written this loader 3 times" | Modular |
-| "Need to run on 100 datasets" | Modular |
+Each module exposes `def main(input_path, output_path)` with type hints and `if __name__ == "__main__":`.
 
-**Anti-pattern:** Don't over-engineer exploratory code with classes and config objects.
+| Task | Location |
+|------|----------|
+| One-off exploration | `notebooks/` or `scripts/` |
+| Reusable pipeline | `{{ cookiecutter.module_name }}/` |
+| Repeated 3× logic | promote to `utils/` |
+{% endif %}
 
-## Data Format and Tool Selection
+{% if cookiecutter.project_language == "both" -%}
+### Hybrid Note
+- Python ↔ Julia exchange via `data/interim/*.arrow` (Arrow/Feather), not CSV/Parquet.
+- Keep `data/cross_language.*` in sync: `python_to_julia.arrow` / `julia_to_python.arrow`.
+{% endif %}
 
-### Primary Storage: Parquet
-
-Raw data can be any format. After processing, **always save as Parquet**.
-
-```python
-df = pd.read_csv(RAW_DATA_DIR / "original.csv")
-df_processed = df.dropna().reset_index(drop=True)
-df_processed.to_parquet(PROCESSED_DATA_DIR / "results.parquet")
-```
-
-### Cross-Language: Arrow/Feather
-
-For Python + Julia/R: use `.feather` or `.arrow` format.
-
-### Tool Selection by Data Size
-
-| Size | Tool | Use Case |
-|------|------|----------|
-| < 1 GB | **pandas** | Standard analysis |
-| < 10 GB | **Polars** | Lazy evaluation |
-| > 10 GB | **DuckDB** | SQL on Parquet |
-
-```python
-# DuckDB for large files
-import duckdb
-result = duckdb.sql("""
-    SELECT category, AVG(value) as mean_value
-    FROM 'data/raw/*.parquet'
-    GROUP BY category
-""").to_df()
-```
-
-### Storage Convention
+## Data & Storage Convention
 
 ```
 data/
-├── raw/        # Original data (any format) — keep intact
-├── interim/    # Intermediate (Parquet) + cross-language (Feather)
-└── processed/  # Final analysis data (ALWAYS Parquet)
+├── raw/        # immutable originals (any format)
+├── interim/    # intermediate + cross-language (*.arrow)
+├── processed/  # final analysis (ALWAYS Parquet{% if cookiecutter.project_language in ["julia","both"] %} / Arrow{% endif %})
+└── external/   # third-party
+reports/figures/  logs/  models/
 ```
+
+- Raw may be any format; processed **always Parquet** (Python) {% if cookiecutter.project_language in ["julia","both"] %}or Arrow (Julia){% endif %}.
+- By size: `<1GB pandas` / `<10GB Polars` / `>10GB DuckDB` (Python).
 
 ## Code Style Guidelines
 
-### Formatting
-
-- **Line Length**: 88 characters
-- **Quote Style**: Double quotes
-- **Import Order**: stdlib → third-party → local (blank lines between)
-
-```python
-from pathlib import Path
-
-import numpy as np
-import pandas as pd
-
-from src.config import DATA_DIR
-```
-
-### Type Hints (Python 3.12+ style)
-
-- Built-in generics: `list[int]`, `dict[str, float]`
-- Union syntax: `int | None` — avoid legacy `typing.Union`
-
-### Documentation (sklearn-style)
-
-```python
-def compute_probability(x: float, y: float) -> float:
-    """Compute joint probability from marginals.
-
-    Parameters
-    ----------
-    x : float
-        First marginal probability.
-    y : float
-        Second marginal probability.
-
-    Returns
-    -------
-    float
-        Joint probability value.
-    """
-```
-
-### Error Handling
-
-- Raise `ValueError` for invalid inputs with descriptive messages
-- Use early returns for edge cases
-
-### Logging
-
-- Use `loguru` for logging, `tqdm` for progress bars
+{% if cookiecutter.project_language in ["python", "both"] -%}
+### Python
+- Line length 88, double quotes, import order stdlib → third-party → local
+- Type hints Python 3.12 style: `list[int]`, `int | None`
+- Docstring sklearn-style, raise `ValueError` with message, `loguru` + `tqdm`
+{% if cookiecutter.linting_and_formatting == "ruff" -%}
+- Lint/format: `ruff` (`make lint` / `make format`)
+{% else -%}
+- Lint/format: `flake8 + black + isort` (`make lint` / `make format`)
+{% endif -%}
+{% endif %}
+{% if cookiecutter.project_language in ["julia", "both"] -%}
+### Julia
+- Use `JuliaFormatter` style, `Logging` for logs
+- `include("../config.jl")` for paths in `src/`
+- Mirror Python module names: `make_dataset.jl` ↔ `make_dataset.py`
+{% endif %}
 
 ## Project Architecture
 
+{% if cookiecutter.project_style == "exploratory" -%}
 ```
+{{ cookiecutter.module_name }}/
+├── config.py{% if cookiecutter.project_language in ["julia","both"] %} / src/config.jl{% endif %}
+└── utils/
+scripts/
+├── 01_process_data.py{% if cookiecutter.project_language in ["julia","both"] %} / .jl{% endif %}
+├── 02_analyze.py{% if cookiecutter.project_language in ["julia","both"] %} / .jl{% endif %}
+└── 03_train_predict.py{% if cookiecutter.project_language in ["julia","both"] %} / .jl{% endif %}
+```
+- `scripts/` is primary — keep pipeline minimal.
+{% else -%}
+```
+{{ cookiecutter.module_name }}/
+├── config.py
+├── data/make_dataset.py{% if cookiecutter.project_language == "both" %} + cross_language.py (both only){% endif %}
+├── features/build_features.py
+├── models/train_model.py
+├── visualization/visualize.py
+└── utils/tools.py
+{% if cookiecutter.project_language in ["julia", "both"] -%}
 src/
-├── config.py       # Central paths and logger
-├── models/         # Model definitions
-├── analyze/        # Analysis modules
-└── utils/          # Shared utilities
-
-data/
-├── raw/            # Immutable original data
-├── interim/        # Intermediate processing
-├── processed/      # Final datasets (Parquet)
-└── external/       # Third-party data
-
-models/             # Saved model files (.pkl)
-reports/figures/    # Generated plots
-reports/logs/       # Experiment logs
+├── config.jl
+├── data/make_dataset.jl{% if cookiecutter.project_language == "both" %} + cross_language.jl{% endif %}
+├── features/build_features.jl
+├── models/train_model.jl
+├── visualization/visualize.jl
+└── utils.jl
+{% endif -%}
+scripts/.gitkeep  # use for one-offs
 ```
+{% endif %}
 
-### Configuration (`src/config.py`)
-
-- Centralized path management
-- Environment variable loading via `.env`
-- Loguru logger with tqdm integration
+### Configuration
+- Python: `{{ cookiecutter.module_name }}/config.py` (dotenv + loguru + tqdm)
+- Julia: `src/config.jl` (mirrors Python paths)
 
 ## Skills
-
-- **uv package manager:** See `.agents/skills/uv-package-manager/SKILL.md`
+{% if cookiecutter.project_language in ["python", "both"] -%}
+- uv package manager: `.agents/skills/uv-package-manager/SKILL.md`
+{% endif -%}
+{% if cookiecutter.project_language in ["julia", "both"] -%}
+- Julia Pkg: `julia --project=. -e 'using Pkg; Pkg.instantiate()'` then `make lint-jl`
+{% endif %}

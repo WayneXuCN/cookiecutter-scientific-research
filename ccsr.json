@@ -51,6 +51,6 @@
         "GNU General Public License v3",
         "No license file"],
     "docs": ["none", "mkdocs"],
-    "agent_guidance": ["none", "claude", "openai", "both"],
+    "agent_guidance": ["openai", "claude", "both"],
     "custom_config": ""
 }

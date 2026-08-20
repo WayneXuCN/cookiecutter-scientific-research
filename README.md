@@ -89,29 +89,22 @@ The generated project follows the directory structure below, with each section h
 │   ├── processed      <- Final analysis datasets
 │   └── raw            <- Original data (read-only)
 │
-├── {{ cookiecutter.module_name }}  <- Project source code
-│   ├── __init__.py    <- Package initialization file
-│   ├── config.py      <- Configuration parameter management
-│   ├── data           <- Data acquisition and loading
+├── {{ cookiecutter.module_name }}  <- Project source code (structured: 5 modules)
+│   ├── __init__.py           <- Package initialization file
+│   ├── config.py             <- Configuration parameter management
+│   ├── data                  <- Data acquisition and loading
 │   │   ├── __init__.py
-│   │   └── dataset.py
-│   ├── analyze        <- Data analysis module
+│   │   └── make_dataset.py   <- raw → processed (Parquet)
+│   ├── features              <- Feature engineering
 │   │   ├── __init__.py
-│   │   └── analysis.py
-│   ├── features       <- Feature engineering
+│   │   └── build_features.py <- Features from processed data
+│   ├── models                <- Model training
 │   │   ├── __init__.py
-│   │   └── features.py
-│   ├── models         <- Model definitions
+│   │   └── train_model.py    <- Train & persist model
+│   ├── visualization         <- Data visualization
 │   │   ├── __init__.py
-│   │   └── model.py
-│   ├── training       <- Model training and prediction
-│   │   ├── __init__.py
-│   │   ├── train.py
-│   │   └── predict.py
-│   ├── visualization  <- Data visualization
-│   │   ├── __init__.py
-│   │   └── plots.py
-│   └── utils          <- Utility functions
+│   │   └── visualize.py      <- Plots to reports/figures
+│   └── utils                 <- Utility functions
 │       ├── __init__.py
 │       └── tools.py
 │
@@ -167,7 +160,7 @@ During the template generation process, you can customize various aspects of the
 - Notebook and linting choices
 - And more
 
-> `structured` preserves the original 7-module scaffold (`data/analyze/features/models/training/visualization/utils`), `exploratory` keeps only `config.py` + `utils` (+ `scripts/`) for fast iteration. For Julia, `.jl` scaffold mirrors the Python one under `src/` and `Project.toml` is committed (like `uv.lock`) for reproducibility.
+> `structured` now uses a slimmed 5-module scaffold (`data/features/models/visualization/utils`) — `make_dataset.py` / `build_features.py` / `train_model.py` / `visualize.py` each expose `def main(...)` for testable pipelines; `exploratory` keeps only `config.py` + `utils` (+ `scripts/01_*.py` linear scripts) for fast iteration. For Julia, `.jl` scaffold mirrors Python under `src/` (`make_dataset.jl` etc.) and `Project.toml` is committed (like `uv.lock`) for reproducibility. `cross_language.*` is only kept for `both`.
 
 ## 🙏 Acknowledgements
 

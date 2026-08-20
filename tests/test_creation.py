@@ -83,10 +83,8 @@ def verify_folders(root, config):
             if project_style == "structured":
                 expected_dirs += [
                     f"{config['module_name']}/data",
-                    f"{config['module_name']}/analyze",
                     f"{config['module_name']}/features",
                     f"{config['module_name']}/models",
-                    f"{config['module_name']}/training",
                     f"{config['module_name']}/visualization",
                     f"{config['module_name']}/utils",
                 ]
@@ -101,10 +99,8 @@ def verify_folders(root, config):
         if config["include_code_scaffold"] == "Yes" and project_style == "structured":
             expected_dirs += [
                 "src/data",
-                "src/analyze",
                 "src/features",
                 "src/models",
-                "src/training",
                 "src/visualization",
             ]
         # exploratory has no subdirs
@@ -120,21 +116,28 @@ def verify_folders(root, config):
         expected_dirs += ["tests"]
 
     # Agent guidance directories
-    agent_guidance = config.get("agent_guidance", "none")
+    agent_guidance = config.get("agent_guidance", "openai")
     if agent_guidance in ("claude", "both"):
         expected_dirs += [
             ".claude",
             ".claude/rules",
             ".claude/skills",
-            ".claude/skills/uv-package-manager",
         ]
+        # uv skill only for python/both
+        if project_language in ["python", "both"]:
+            expected_dirs += [
+                ".claude/skills/uv-package-manager",
+            ]
     if agent_guidance in ("openai", "both"):
         expected_dirs += [
             ".agents",
             ".agents/rules",
             ".agents/skills",
-            ".agents/skills/uv-package-manager",
         ]
+        if project_language in ["python", "both"]:
+            expected_dirs += [
+                ".agents/skills/uv-package-manager",
+            ]
 
     expected_dirs = [
         #  (root / d).resolve().relative_to(root) for d in expected_dirs
@@ -171,8 +174,25 @@ def verify_files(root, config):
         "reports/figures/.gitkeep",
         "reports/logs/.gitkeep",
         "models/.gitkeep",
-        "scripts/.gitkeep",
     ]
+
+    # Scripts handling: structured or scaffold No -> only .gitkeep, exploratory+Yes -> example scripts per language
+    if config["include_code_scaffold"] == "No" or project_style == "structured":
+        expected_files += ["scripts/.gitkeep"]
+    else:  # exploratory + Yes
+        if project_language in ["python", "both"]:
+            expected_files += [
+                "scripts/01_process_data.py",
+                "scripts/02_analyze.py",
+                "scripts/03_train_predict.py",
+            ]
+        if project_language in ["julia", "both"]:
+            expected_files += [
+                "scripts/01_process_data.jl",
+                "scripts/02_analyze.jl",
+                "scripts/03_train_predict.jl",
+            ]
+        # no .gitkeep when real scripts exist
 
     # Python files
     if project_language in ["python", "both"]:
@@ -185,23 +205,21 @@ def verify_files(root, config):
                 expected_files += [
                     f"{config['module_name']}/config.py",
                     f"{config['module_name']}/data/__init__.py",
-                    f"{config['module_name']}/data/dataset.py",
-                    f"{config['module_name']}/data/cross_language.py",
-                    f"{config['module_name']}/data/large_query.py",
-                    f"{config['module_name']}/analyze/__init__.py",
-                    f"{config['module_name']}/analyze/analysis.py",
+                    f"{config['module_name']}/data/make_dataset.py",
                     f"{config['module_name']}/features/__init__.py",
-                    f"{config['module_name']}/features/features.py",
+                    f"{config['module_name']}/features/build_features.py",
                     f"{config['module_name']}/models/__init__.py",
-                    f"{config['module_name']}/models/model.py",
-                    f"{config['module_name']}/training/__init__.py",
-                    f"{config['module_name']}/training/train.py",
-                    f"{config['module_name']}/training/predict.py",
+                    f"{config['module_name']}/models/train_model.py",
                     f"{config['module_name']}/visualization/__init__.py",
-                    f"{config['module_name']}/visualization/plots.py",
+                    f"{config['module_name']}/visualization/visualize.py",
                     f"{config['module_name']}/utils/__init__.py",
                     f"{config['module_name']}/utils/tools.py",
                 ]
+                # cross_language only for both
+                if project_language == "both":
+                    expected_files += [
+                        f"{config['module_name']}/data/cross_language.py",
+                    ]
             else:  # exploratory - only config + utils
                 expected_files += [
                     f"{config['module_name']}/config.py",
@@ -215,8 +233,6 @@ def verify_files(root, config):
         dep_file = config["dependency_file"]
         if dep_file != "pyproject.toml":
             expected_files.append(dep_file)
-        # For python, pyproject.toml already added; if dep_file is pyproject, don't duplicate
-        # But original appended dep_file unconditionally; we handle via set later
 
     # Julia files
     if project_language in ["julia", "both"]:
@@ -231,16 +247,15 @@ def verify_files(root, config):
             ]
             if project_style == "structured":
                 expected_files += [
-                    "src/data/dataset.jl",
-                    "src/data/cross_language.jl",
-                    "src/data/large_query.jl",
-                    "src/analyze/analysis.jl",
-                    "src/features/features.jl",
-                    "src/models/model.jl",
-                    "src/training/train.jl",
-                    "src/training/predict.jl",
-                    "src/visualization/plots.jl",
+                    "src/data/make_dataset.jl",
+                    "src/features/build_features.jl",
+                    "src/models/train_model.jl",
+                    "src/visualization/visualize.jl",
                 ]
+                if project_language == "both":
+                    expected_files += [
+                        "src/data/cross_language.jl",
+                    ]
         # exploratory has no extra files beyond config/utils
         # scaffold No: only main module file
 
@@ -270,24 +285,32 @@ def verify_files(root, config):
             "tests/test_data.py",
         ]
 
-    # Agent guidance files
-    agent_guidance = config.get("agent_guidance", "none")
+    # Agent guidance files — now only openai/claude/both, openai is default
+    agent_guidance = config.get("agent_guidance", "openai")
     if agent_guidance in ("claude", "both"):
         expected_files += [
             "CLAUDE.md",
             ".claude/rules/data-formats.md",
-            ".claude/rules/python-style.md",
             ".claude/rules/testing.md",
-            ".claude/skills/uv-package-manager/SKILL.md",
         ]
+        if project_language in ["python", "both"]:
+            expected_files += [".claude/rules/python-style.md"]
+        if project_language in ["julia", "both"]:
+            expected_files += [".claude/rules/julia-style.md"]
+        if project_language in ["python", "both"]:
+            expected_files += [".claude/skills/uv-package-manager/SKILL.md"]
     if agent_guidance in ("openai", "both"):
         expected_files += [
             "AGENTS.md",
             ".agents/rules/data-formats.md",
-            ".agents/rules/python-style.md",
             ".agents/rules/testing.md",
-            ".agents/skills/uv-package-manager/SKILL.md",
         ]
+        if project_language in ["python", "both"]:
+            expected_files += [".agents/rules/python-style.md"]
+        if project_language in ["julia", "both"]:
+            expected_files += [".agents/rules/julia-style.md"]
+        if project_language in ["python", "both"]:
+            expected_files += [".agents/skills/uv-package-manager/SKILL.md"]
 
     expected_files = [Path(f) for f in expected_files]
 
